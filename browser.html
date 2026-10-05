@@ -1,0 +1,1064 @@
+<!-- Copyright (c) 2026 Amicus Technology Services Inc. All Rights Reserved. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amicus Web Assistant™ | Live Agent Browser & Autonomous Chat</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --bg-panel: #0d1322;
+      --bg-card: #121a2d;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --cyan-glow: #06b6d4;
+      --laser-blue: #3b82f6;
+    }
+    body {
+      background-color: var(--bg-dark);
+      color: #cbd5e1;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+    /* Subtle Tactical Grid */
+    .tactical-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+    /* Synthetic Agent Cursor Animation */
+    #agent-cursor {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      pointer-events: none;
+      transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.2s ease;
+      will-change: transform;
+    }
+    .cursor-ripple {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(6, 182, 212, 0.4);
+      border: 2px solid #06b6d4;
+      transform: translate(-50%, -50%) scale(0);
+      animation: rippleAnim 0.6s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      0% { transform: translate(-50%, -50%) scale(0.2); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col tactical-grid selection:bg-cyan-500/30 selection:text-white">
+
+  <!-- TOP TELEMETRY HUD -->
+  <header class="border-b border-gray-800/80 bg-gray-950/90 backdrop-blur-md px-4 py-2.5 flex items-center justify-between z-30 select-none">
+    <div class="flex items-center gap-3">
+      <div class="w-2.5 h-2.5 rounded-sm bg-cyan-400 rotate-45 shadow-[0_0_8px_#06b6d4]"></div>
+      <div class="flex items-baseline gap-2">
+        <span class="text-sm font-bold text-white tracking-tight">Amicus Web Assistant™</span>
+        <span class="text-[10px] font-mono font-semibold text-cyan-400 bg-cyan-950/70 border border-cyan-800/60 px-1.5 py-0.5 rounded">
+          LIVE AGENT BROWSER DECK
+        </span>
+      </div>
+    </div>
+
+    <!-- Center HUD Status Indicators -->
+    <div class="hidden md:flex items-center gap-4 text-xs font-mono text-gray-400">
+      <div class="flex items-center gap-1.5">
+        <span id="agentStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>AGENT ENGINE: <span id="agentStatusText" class="text-emerald-400 font-semibold">STANDBY / READY</span></span>
+      </div>
+      <div class="text-gray-700">|</div>
+      <div>CONTROL BRIDGE: <span class="text-cyan-400 font-medium">FULL DUPLEX</span></div>
+      <div class="text-gray-700">|</div>
+      <div class="flex items-center gap-1">
+        <span>SPEED:</span>
+        <select id="speedSelect" class="bg-gray-900 border border-gray-800 text-cyan-300 rounded px-1.5 py-0.5 text-[11px] focus:outline-none">
+          <option value="1">1.0x Realistic</option>
+          <option value="2" selected>2.0x Fast</option>
+          <option value="4">4.0x Turbo</option>
+        </select>
+      </div>
+      <div class="text-gray-700">|</div>
+      <button onclick="toggleStepThrough()" id="stepThroughBtn" class="flex items-center gap-1 px-2 py-0.5 rounded bg-gray-900 border border-gray-800 text-gray-400 hover:text-cyan-300 text-[11px] transition" title="Toggle Step-Through Debugger mode to manually approve each step">
+        <span id="stepThroughIcon">⏸</span> <span id="stepThroughText">DEBUGGER: OFF</span>
+      </button>
+    </div>
+
+    <!-- Right Navigation & Layout Controls -->
+    <div class="flex items-center gap-2">
+      <button onclick="toggleAudio()" id="audioBtn" class="flex items-center gap-1 px-2.5 py-1 text-xs font-mono rounded bg-gray-900 border border-gray-800 text-gray-400 hover:text-white transition" title="Toggle tactile action SFX">
+        <span id="audioIcon">🔈</span> <span id="audioText">SFX: ON</span>
+      </button>
+      <a href="/studio" class="px-2.5 py-1 text-xs font-mono rounded bg-gray-900 border border-gray-800 text-gray-300 hover:text-cyan-300 transition flex items-center gap-1.5">
+        <span>🎨</span> <span>Component Studio</span>
+      </a>
+      <a href="/" class="px-2.5 py-1 text-xs font-mono rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600 hover:text-white transition">
+        Overview ↗
+      </a>
+    </div>
+  </header>
+
+  <!-- SPLIT WORKSPACE: CHAT WINDOW NEXT TO LIVE BROWSER WINDOW -->
+  <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+
+    <!-- LEFT WINDOW: AGENT CHAT & COMMAND DISPATCH -->
+    <section id="chatPane" class="w-full lg:w-[420px] xl:w-[460px] border-r border-gray-800/80 bg-gray-950/70 flex flex-col z-20 shadow-2xl">
+      
+      <!-- Chat Header -->
+      <div class="px-4 py-2.5 border-b border-gray-800/80 bg-gray-900/60 flex items-center justify-between text-xs font-mono">
+        <div class="flex items-center gap-2">
+          <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+          <span class="text-white font-semibold">Autonomous Web Agent</span>
+          <span class="text-[10px] text-gray-500">[CDP + Live DOM]</span>
+        </div>
+        <button onclick="clearChat()" class="text-gray-500 hover:text-gray-300 text-[11px] transition">Clear History</button>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+        
+        <!-- Welcome Agent Message -->
+        <div class="flex items-start gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-cyan-500/20 shrink-0">
+            🤖
+          </div>
+          <div class="flex-1 space-y-2">
+            <div class="bg-gray-900/90 border border-gray-800 rounded-xl p-3.5 space-y-2 shadow-lg">
+              <div class="flex items-center justify-between text-[11px] text-gray-400 font-mono">
+                <span class="text-cyan-400 font-semibold">Amicus Assistant</span>
+                <span>System Online</span>
+              </div>
+              <p class="text-gray-200 leading-relaxed">
+                I have full autonomous control over the live browser window on the right. I can navigate, fill forms, trigger 1-click checkouts, modify styling live, and execute end-to-end automation in real time.
+              </p>
+              <div class="text-[11px] text-gray-400 font-mono pt-1">
+                Try asking me in plain English, or click one of the quick actions below!
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quick Action Suggestions Bar -->
+      <div class="px-3 py-2 border-t border-gray-800/60 bg-gray-900/40">
+        <div class="text-[10px] font-mono uppercase tracking-wider text-gray-500 font-semibold mb-1.5 flex items-center justify-between">
+          <span>⚡ 1-Click Agent Automation</span>
+          <span class="text-cyan-500">Live Browser Control</span>
+        </div>
+        <div class="flex gap-1.5 overflow-x-auto pb-1 text-[11px] font-mono no-scrollbar">
+          <button onclick="dispatchQuickAction('fill out checkout form and submit')" class="px-2.5 py-1 rounded-lg bg-cyan-950/60 border border-cyan-700/50 text-cyan-300 hover:bg-cyan-900/80 whitespace-nowrap transition active:scale-95">
+            📝 Auto-Fill & Checkout
+          </button>
+          <button onclick="dispatchQuickAction('pay with Link 1-click wallet')" class="px-2.5 py-1 rounded-lg bg-emerald-950/60 border border-emerald-700/50 text-emerald-300 hover:bg-emerald-900/80 whitespace-nowrap transition active:scale-95">
+            🔗 1-Click Link Wallet
+          </button>
+          <button onclick="dispatchQuickAction('add cyan glow to the button')" class="px-2.5 py-1 rounded-lg bg-blue-950/60 border border-blue-700/50 text-blue-300 hover:bg-blue-900/80 whitespace-nowrap transition active:scale-95">
+            ✨ Add Cyan Glow
+          </button>
+          <button onclick="dispatchQuickAction('switch to saas hero page')" class="px-2.5 py-1 rounded-lg bg-purple-950/60 border border-purple-700/50 text-purple-300 hover:bg-purple-900/80 whitespace-nowrap transition active:scale-95">
+            🚀 SaaS Hero Page
+          </button>
+          <button onclick="dispatchQuickAction('open telemetry radar dashboard')" class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800 whitespace-nowrap transition active:scale-95">
+            📊 Telemetry Deck
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Input Area -->
+      <div class="p-3 border-t border-gray-800/80 bg-gray-950 space-y-2">
+        <form id="chatForm" onsubmit="handleChatSubmit(event)" class="relative">
+          <textarea id="chatInput" rows="2" placeholder="Tell the agent what to do in the browser (e.g. 'fill out the form', 'add a glow to the button', 'change title text')..." class="w-full bg-gray-900 border border-gray-800 focus:border-cyan-500 rounded-xl p-3 text-xs font-mono text-white placeholder-gray-500 focus:outline-none transition resize-none leading-relaxed" onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); handleChatSubmit(event); }"></textarea>
+          
+          <div class="flex items-center justify-between pt-1">
+            <span class="text-[10px] font-mono text-gray-500">[Press Enter to Send]</span>
+            <div class="flex items-center gap-2">
+              <button id="stopBtn" type="button" onclick="stopAutomation()" class="hidden px-2.5 py-1 rounded-lg bg-red-950 border border-red-700 text-red-300 hover:bg-red-900 text-xs font-mono transition">
+                ⏹ Stop
+              </button>
+              <button id="sendBtn" type="submit" class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white text-xs font-mono font-semibold transition shadow-md shadow-blue-600/30 flex items-center gap-1.5 active:scale-95">
+                <span>Dispatch</span>
+                <span>⚡</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- RIGHT WINDOW: LIVE AGENT-CONTROLLED BROWSER -->
+    <section id="browserPane" class="flex-1 flex flex-col bg-[#050811] overflow-hidden relative">
+      
+      <!-- BROWSER TOP BAR (CHROME / CONTROLS) -->
+      <div class="px-4 py-2 border-b border-gray-800/80 bg-gray-950/90 flex flex-wrap items-center justify-between gap-3 text-xs font-mono select-none z-10">
+        
+        <!-- Navigation Buttons & SSL Lock -->
+        <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1 text-gray-400">
+            <button onclick="browserNavBack()" class="w-6 h-6 rounded bg-gray-900 hover:bg-gray-800 border border-gray-800 flex items-center justify-center transition" title="Back">‹</button>
+            <button onclick="browserNavForward()" class="w-6 h-6 rounded bg-gray-900 hover:bg-gray-800 border border-gray-800 flex items-center justify-center transition" title="Forward">›</button>
+            <button onclick="reloadBrowserFrame()" class="w-6 h-6 rounded bg-gray-900 hover:bg-gray-800 border border-gray-800 flex items-center justify-center transition" title="Reload">⟳</button>
+          </div>
+
+          <!-- URL Address Bar -->
+          <div class="flex items-center gap-1.5 bg-gray-900/90 border border-gray-800 rounded-lg px-3 py-1 text-xs text-gray-300 max-w-sm sm:max-w-md w-full">
+            <span class="text-emerald-400 text-xs">🔒</span>
+            <span id="browserUrl" class="font-mono text-cyan-300 truncate">amicus://checkout.amicus-web.net</span>
+          </div>
+        </div>
+
+        <!-- Center Template Switcher -->
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] text-gray-500 hidden xl:inline">PAGE:</span>
+          <select id="templateSelect" onchange="loadSelectedTemplate(this.value)" class="bg-gray-900 border border-gray-800 text-gray-200 rounded px-2.5 py-1 text-xs font-mono focus:outline-none focus:border-cyan-500">
+            <option value="checkout">⚡ Checkout & Payments</option>
+            <option value="hero">🚀 SaaS Hero Banner</option>
+            <option value="telemetry">📊 Telemetry & Nocturnal Radar</option>
+          </select>
+        </div>
+
+        <!-- Right Viewport Switcher -->
+        <div class="flex items-center bg-gray-900 border border-gray-800 rounded p-0.5 text-xs font-mono">
+          <button onclick="setBrowserViewport('desktop')" id="vp-btn-desktop" class="px-2 py-0.5 rounded bg-blue-600 text-white font-medium transition" title="Desktop 100%">
+            💻 100%
+          </button>
+          <button onclick="setBrowserViewport('tablet')" id="vp-btn-tablet" class="px-2 py-0.5 rounded text-gray-400 hover:text-white transition" title="Tablet 768px">
+            📱 768px
+          </button>
+          <button onclick="setBrowserViewport('mobile')" id="vp-btn-mobile" class="px-2 py-0.5 rounded text-gray-400 hover:text-white transition" title="Mobile 375px">
+            📲 375px
+          </button>
+        </div>
+      </div>
+
+      <!-- LIVE AGENT OVERLAY HUD (FLOATING IN BROWSER) -->
+      <div id="agentHudOverlay" class="absolute top-12 left-6 right-6 z-20 pointer-events-auto transition-all duration-300 opacity-0 transform -translate-y-2">
+        <div class="max-w-lg mx-auto bg-gray-950/95 border border-cyan-500/60 rounded-xl px-4 py-2.5 shadow-2xl backdrop-blur-md flex flex-wrap items-center justify-between gap-3 font-mono text-xs">
+          <div class="flex items-center gap-2.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+            <div>
+              <div class="text-[10px] text-cyan-400 font-bold uppercase tracking-wider">AGENT AUTOMATION ACTIVE</div>
+              <div id="hudActionLabel" class="text-white text-xs font-semibold">Focusing #cust-name...</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span id="hudStepBadge" class="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px]">STEP 1/6</span>
+            
+            <!-- Step-Through Interactive Control Buttons -->
+            <div id="debuggerControls" class="hidden flex items-center gap-1.5 pl-2 border-l border-gray-800">
+              <button onclick="approveCurrentStep()" class="px-2.5 py-1 rounded bg-cyan-600 hover:bg-cyan-500 text-white font-semibold text-[11px] transition shadow-md shadow-cyan-600/30 flex items-center gap-1" title="Execute this step (or press Space)">
+                <span>⏭ Step</span>
+              </button>
+              <button onclick="resumeContinuous()" class="px-2 py-1 rounded bg-gray-900 hover:bg-gray-800 text-cyan-300 border border-cyan-700/50 text-[10px] transition" title="Resume continuous execution">
+                <span>⏯ Resume</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BROWSER CANVAS VIEWPORT CONTAINER -->
+      <div class="flex-1 p-4 flex items-center justify-center overflow-auto bg-black/40 relative">
+        
+        <div id="browserViewportWrapper" class="w-full h-full min-h-[480px] bg-slate-950 border border-gray-800/80 rounded-xl overflow-hidden shadow-2xl relative flex flex-col transition-all duration-200">
+          
+          <!-- SYNTHETIC AGENT CURSOR (GLOWING POINTER & RIPPLE) -->
+          <div id="agent-cursor" class="hidden">
+            <svg class="w-6 h-6 drop-shadow-[0_0_8px_rgba(6,182,212,0.9)] text-cyan-400 fill-current" viewBox="0 0 24 24">
+              <path d="M3 3l7 18 3-7 7-3L3 3z"/>
+            </svg>
+            <div id="cursor-badge" class="ml-4 -mt-2 px-2 py-0.5 rounded bg-cyan-950/90 border border-cyan-500/70 text-cyan-300 text-[10px] font-mono whitespace-nowrap shadow-lg">
+              Agent
+            </div>
+          </div>
+
+          <!-- SANDBOXED ACTIVE BROWSER CONTENT -->
+          <div id="liveBrowserContent" class="flex-1 w-full h-full overflow-y-auto relative">
+            <!-- Loaded dynamically from templates -->
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- BROWSER BOTTOM STATUS SPINE -->
+      <div class="px-4 py-1.5 border-t border-gray-800/80 bg-gray-950 flex items-center justify-between text-[11px] font-mono text-gray-500 flex-wrap gap-2">
+        <div class="flex items-center gap-3">
+          <span>STATUS: <span id="browserState" class="text-emerald-400">READY</span></span>
+          <span>•</span>
+          <span>MUTATIONS: <span id="mutationCount" class="text-cyan-400">0</span></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="exportSessionSnapshot()" class="px-2.5 py-0.5 rounded bg-gray-900 hover:bg-gray-800 border border-gray-800 hover:border-cyan-500/50 text-gray-300 hover:text-cyan-300 transition flex items-center gap-1" title="Export session history, telemetry, and live DOM snapshot as JSON">
+            <span>📥</span> Export Audit Snapshot
+          </button>
+          <span class="text-gray-700">|</span>
+          <span>Amicus Live Engine v0.1.0</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    // System State
+    let currentTemplate = 'checkout';
+    let templatesData = {};
+    let isAutomating = false;
+    let stopRequested = false;
+    let audioEnabled = true;
+    let audioCtx = null;
+    let mutationCounter = 0;
+    let executionSpeed = 2; // Default 2x
+    let stepThroughMode = false;
+    let stepApprovalResolver = null;
+    let lastExecutedPlan = null;
+    let sessionHistoryLog = [];
+
+    // Sound Synthesizer (Zero-dependency Web Audio API)
+    function playBeep(freq = 440, type = 'sine', duration = 0.05) {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      document.getElementById('audioText').textContent = audioEnabled ? 'SFX: ON' : 'SFX: OFF';
+      document.getElementById('audioIcon').textContent = audioEnabled ? '🔈' : '🔇';
+    }
+
+    // Initialize application & fetch templates from backend
+    async function init() {
+      try {
+        const res = await fetch('/api/v1/assistant/browser/templates');
+        if (res.ok) {
+          const data = await res.json();
+          data.templates.forEach(t => {
+            templatesData[t.id] = t;
+          });
+        }
+      } catch (err) {
+        console.warn('Backend templates API offline, fallback loaded');
+      }
+
+      // Default fallback templates if offline
+      if (!templatesData['checkout']) {
+        loadFallbackTemplates();
+      }
+
+      // Speed selection handler
+      document.getElementById('speedSelect').addEventListener('change', (e) => {
+        executionSpeed = parseFloat(e.target.value) || 1;
+      });
+
+      // Load initial template
+      loadSelectedTemplate('checkout');
+    }
+
+    function loadFallbackTemplates() {
+      templatesData['checkout'] = {
+        id: 'checkout',
+        url: 'amicus://checkout.amicus-web.net',
+        html: `
+          <div id="checkout-root" class="min-h-full bg-slate-950 text-slate-100 p-6 flex items-center justify-center font-sans antialiased">
+            <div class="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl space-y-6">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/30">⚡</div>
+                  <div>
+                    <h1 id="checkout-title" class="text-lg font-bold text-white tracking-tight">Amicus WebDaaS™ Order</h1>
+                    <p class="text-xs text-slate-400">Order #WD-9941 • Instant Activation</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <span id="price-tag" class="text-xl font-mono font-bold text-cyan-400">$99.00</span>
+                  <span class="text-[10px] text-slate-500 block">/ month</span>
+                </div>
+              </div>
+
+              <div class="space-y-2.5">
+                <span class="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold block">Express 1-Click Checkout</span>
+                <div class="grid grid-cols-2 gap-2">
+                  <button id="btn-wallet-link" type="button" class="py-2.5 px-3 bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 rounded-xl text-xs font-semibold text-emerald-300 flex items-center justify-center gap-2 transition active:scale-95">
+                    <span>🔗</span> Pay with Link
+                  </button>
+                  <button id="btn-wallet-apple" type="button" class="py-2.5 px-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-xs font-semibold text-white flex items-center justify-center gap-2 transition active:scale-95">
+                    <span></span> Apple Pay
+                  </button>
+                </div>
+              </div>
+
+              <form id="checkout-form" class="space-y-4" onsubmit="event.preventDefault();">
+                <div>
+                  <label for="cust-name" class="block text-xs font-medium text-slate-300 mb-1">Full Name</label>
+                  <input id="cust-name" type="text" placeholder="e.g. Alex Morgan" class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg px-3 py-2 text-xs font-mono text-white placeholder-slate-600 focus:outline-none transition">
+                </div>
+
+                <div>
+                  <label for="cust-email" class="block text-xs font-medium text-slate-300 mb-1">Email Address</label>
+                  <input id="cust-email" type="email" placeholder="alex@domain.com" class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg px-3 py-2 text-xs font-mono text-white placeholder-slate-600 focus:outline-none transition">
+                </div>
+
+                <div>
+                  <label for="card-number" class="block text-xs font-medium text-slate-300 mb-1">Card Number (Simulated)</label>
+                  <input id="card-number" type="text" placeholder="4242 •••• •••• 4242" class="w-full bg-slate-950 border border-slate-800 focus:border-cyan-500 rounded-lg px-3 py-2 text-xs font-mono text-white placeholder-slate-600 focus:outline-none transition">
+                </div>
+
+                <div class="flex items-center gap-2 pt-1">
+                  <input id="terms-checkbox" type="checkbox" class="w-4 h-4 rounded bg-slate-950 border-slate-800 text-cyan-500 focus:ring-0">
+                  <label for="terms-checkbox" class="text-xs text-slate-400">I agree to terms of service & SLA</label>
+                </div>
+
+                <button id="btn-submit-order" type="button" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold rounded-xl text-xs shadow-lg shadow-blue-500/25 transition flex items-center justify-center gap-2 active:scale-95">
+                  <span>🔒 Complete Purchase</span>
+                </button>
+              </form>
+
+              <div id="order-status-banner" class="hidden p-3 rounded-xl bg-emerald-950/70 border border-emerald-500/50 text-emerald-300 text-xs font-mono text-center">
+                ✓ Transaction Approved! WebDaaS Instance Provisioned.
+              </div>
+            </div>
+          </div>
+        `
+      };
+
+      templatesData['hero'] = {
+        id: 'hero',
+        url: 'amicus://app.amicus-web.net/home',
+        html: `
+          <div id="hero-root" class="min-h-full bg-[#070b14] text-white flex flex-col items-center justify-center p-8 text-center relative overflow-hidden font-sans">
+            <div class="max-w-3xl z-10 space-y-6">
+              <div id="hero-badge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-medium">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                <span>AMICUS WEBDAAS 2.0 • AGENTIC SYSTEM</span>
+              </div>
+              <h1 id="hero-heading" class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                Build & Automate Web Apps <span class="bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">At Machine Speed</span>
+              </h1>
+              <p id="hero-subtext" class="text-base text-slate-400 max-w-xl mx-auto font-light leading-relaxed">
+                The first autonomous web assistant with deep side-by-side browser control, real-time live patching, and nocturnal zero-touch discovery.
+              </p>
+              <div class="flex items-center justify-center gap-4 pt-2">
+                <button id="hero-cta-primary" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition shadow-lg shadow-blue-600/30 flex items-center gap-2 active:scale-95">
+                  <span>🚀 Deploy Agent Node</span>
+                </button>
+                <button id="hero-cta-secondary" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-semibold text-xs transition active:scale-95">
+                  <span>Documentation ↗</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        `
+      };
+
+      templatesData['telemetry'] = {
+        id: 'telemetry',
+        url: 'amicus://ops.amicus-web.net/radar',
+        html: `
+          <div id="telemetry-root" class="min-h-full bg-slate-950 text-slate-200 p-6 font-mono text-xs">
+            <div class="max-w-4xl mx-auto space-y-6">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                  <span class="w-3 h-3 rounded-sm bg-cyan-400 rotate-45 shadow-[0_0_8px_#06b6d4]"></span>
+                  <span class="font-bold text-white text-sm">TELEMETRY DECK // NODE-44</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span class="text-emerald-400 font-semibold">RADAR ACTIVE</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div id="card-cpu" class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                  <div class="flex justify-between text-slate-400">
+                    <span>CORE UTILIZATION</span>
+                    <span class="text-cyan-400 font-bold">28.4%</span>
+                  </div>
+                  <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div class="bg-cyan-500 h-full w-[28%]"></div>
+                  </div>
+                </div>
+                <div id="card-latency" class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                  <div class="flex justify-between text-slate-400">
+                    <span>PATCH LATENCY</span>
+                    <span class="text-emerald-400 font-bold">12ms</span>
+                  </div>
+                  <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                    <div class="bg-emerald-500 h-full w-[12%]"></div>
+                  </div>
+                </div>
+                <div id="card-nocturnal" class="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                  <div class="flex justify-between text-slate-400">
+                    <span>NOCTURNAL RADAR</span>
+                    <span class="text-purple-400 font-bold">READY</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400">Auto Scan at 02:00 AM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      };
+    }
+
+    // Load template into live browser viewport
+    function loadSelectedTemplate(tplId) {
+      currentTemplate = tplId;
+      document.getElementById('templateSelect').value = tplId;
+      const tpl = templatesData[tplId];
+      if (!tpl) return;
+
+      document.getElementById('browserUrl').textContent = tpl.url;
+      const container = document.getElementById('liveBrowserContent');
+      container.innerHTML = tpl.html;
+
+      // Re-attach interactive demo listeners in the live browser container
+      const linkBtn = container.querySelector('#btn-wallet-link');
+      if (linkBtn) {
+        linkBtn.addEventListener('click', () => {
+          playBeep(600, 'triangle', 0.1);
+          const banner = container.querySelector('#order-status-banner');
+          if (banner) {
+            banner.classList.remove('hidden');
+            banner.innerHTML = '<span>🔗</span> Authenticated via Link by Stripe!';
+          }
+        });
+      }
+
+      const submitBtn = container.querySelector('#btn-submit-order');
+      if (submitBtn) {
+        submitBtn.addEventListener('click', () => {
+          playBeep(700, 'triangle', 0.12);
+          const banner = container.querySelector('#order-status-banner');
+          if (banner) {
+            banner.classList.remove('hidden');
+          }
+        });
+      }
+
+      // Hide cursor initially
+      hideAgentCursor();
+    }
+
+    function reloadBrowserFrame() {
+      playBeep(480, 'sine', 0.05);
+      loadSelectedTemplate(currentTemplate);
+    }
+
+    function browserNavBack() {
+      playBeep(400, 'sine', 0.05);
+      const keys = Object.keys(templatesData);
+      let idx = keys.indexOf(currentTemplate);
+      idx = (idx - 1 + keys.length) % keys.length;
+      loadSelectedTemplate(keys[idx]);
+    }
+
+    function browserNavForward() {
+      playBeep(520, 'sine', 0.05);
+      const keys = Object.keys(templatesData);
+      let idx = keys.indexOf(currentTemplate);
+      idx = (idx + 1) % keys.length;
+      loadSelectedTemplate(keys[idx]);
+    }
+
+    function setBrowserViewport(mode) {
+      const wrapper = document.getElementById('browserViewportWrapper');
+      ['desktop', 'tablet', 'mobile'].forEach(m => {
+        const btn = document.getElementById(`vp-btn-${m}`);
+        if (btn) {
+          btn.className = (m === mode) 
+            ? 'px-2 py-0.5 rounded bg-blue-600 text-white font-medium transition' 
+            : 'px-2 py-0.5 rounded text-gray-400 hover:text-white transition';
+        }
+      });
+
+      if (mode === 'desktop') {
+        wrapper.style.maxWidth = '100%';
+      } else if (mode === 'tablet') {
+        wrapper.style.maxWidth = '768px';
+      } else if (mode === 'mobile') {
+        wrapper.style.maxWidth = '375px';
+      }
+    }
+
+    // Cursor & Action HUD Controls
+    const cursorEl = document.getElementById('agent-cursor');
+    const cursorBadge = document.getElementById('cursor-badge');
+    const hudOverlay = document.getElementById('agentHudOverlay');
+    const hudActionLabel = document.getElementById('hudActionLabel');
+    const hudStepBadge = document.getElementById('hudStepBadge');
+
+    function showAgentCursor(x, y, label = 'Agent') {
+      cursorEl.classList.remove('hidden');
+      cursorEl.style.transform = `translate(${x}px, ${y}px)`;
+      cursorBadge.textContent = label;
+    }
+
+    function hideAgentCursor() {
+      cursorEl.classList.add('hidden');
+    }
+
+    function triggerClickRipple(x, y) {
+      playBeep(550, 'triangle', 0.06);
+      const ripple = document.createElement('div');
+      ripple.className = 'cursor-ripple';
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      document.getElementById('browserViewportWrapper').appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    }
+
+    function updateHud(actionText, stepText) {
+      hudOverlay.style.opacity = '1';
+      hudOverlay.style.transform = 'translateY(0)';
+      hudActionLabel.textContent = actionText;
+      hudStepBadge.textContent = stepText;
+    }
+
+    function hideHud() {
+      hudOverlay.style.opacity = '0';
+      hudOverlay.style.transform = 'translateY(-8px)';
+    }
+
+    // Chat Message Helpers
+    function appendUserMessage(text) {
+      const chat = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'flex items-start justify-end gap-2';
+      div.innerHTML = `
+        <div class="bg-blue-600 text-white rounded-xl rounded-tr-none px-3.5 py-2.5 max-w-[85%] text-xs shadow-md">
+          <p class="leading-relaxed font-mono">${escapeHtml(text)}</p>
+        </div>
+      `;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function appendAgentPlanCard(summary, steps) {
+      const chat = document.getElementById('chatMessages');
+      const card = document.createElement('div');
+      card.className = 'flex items-start gap-2.5';
+      
+      const stepItemsHtml = steps.map((s, idx) => `
+        <div id="chat-step-${idx}" class="flex items-center justify-between p-2 rounded-lg bg-gray-950/80 border border-gray-800 text-[11px] font-mono text-gray-400">
+          <div class="flex items-center gap-2 truncate">
+            <span class="w-1.5 h-1.5 rounded-full bg-gray-600" id="step-dot-${idx}"></span>
+            <span class="text-cyan-400 uppercase font-semibold">${s.action}</span>
+            <span class="text-gray-300 truncate">${s.label || s.selector || s.template}</span>
+          </div>
+          <span id="step-status-${idx}" class="text-[10px] text-gray-500 font-mono">QUEUED</span>
+        </div>
+      `).join('');
+
+      card.innerHTML = `
+        <div class="w-7 h-7 rounded-lg bg-cyan-600 flex items-center justify-center text-white text-xs font-bold shadow-md shadow-cyan-500/20 shrink-0">
+          ⚡
+        </div>
+        <div class="flex-1 space-y-2">
+          <div class="bg-gray-900/90 border border-cyan-800/50 rounded-xl p-3.5 space-y-2.5 shadow-lg">
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span class="text-cyan-300 font-bold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                AUTONOMOUS EXECUTION PLAN
+              </span>
+              <span class="text-gray-500 text-[10px]">${steps.length} STEPS</span>
+            </div>
+            <p class="text-xs text-gray-200">${summary}</p>
+            <div class="space-y-1 pt-1">
+              ${stepItemsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+      chat.appendChild(card);
+      chat.scrollTop = chat.scrollHeight;
+      return card;
+    }
+
+    function markChatStepStatus(stepIndex, status) {
+      const dot = document.getElementById(`step-dot-${stepIndex}`);
+      const statusText = document.getElementById(`step-status-${stepIndex}`);
+      const row = document.getElementById(`chat-step-${stepIndex}`);
+      if (!dot || !statusText || !row) return;
+
+      if (status === 'RUNNING') {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping';
+        statusText.textContent = 'RUNNING';
+        statusText.className = 'text-[10px] text-cyan-400 font-semibold';
+        row.className = 'flex items-center justify-between p-2 rounded-lg bg-cyan-950/60 border border-cyan-600 text-[11px] font-mono text-cyan-200';
+      } else if (status === 'DONE') {
+        dot.className = 'w-1.5 h-1.5 rounded-full bg-emerald-400';
+        statusText.textContent = '✓ OK';
+        statusText.className = 'text-[10px] text-emerald-400 font-semibold';
+        row.className = 'flex items-center justify-between p-2 rounded-lg bg-gray-950/90 border border-gray-800 text-[11px] font-mono text-gray-400';
+      }
+    }
+
+    // Main Autonomous Step Executor
+    async function executeStep(step, index, total) {
+      if (stopRequested) return;
+
+      updateHud(`${step.action.toUpperCase()}: ${step.label || step.selector || step.template}`, `STEP ${index + 1}/${total}`);
+      markChatStepStatus(index, 'RUNNING');
+
+      const wrapper = document.getElementById('browserViewportWrapper');
+      const container = document.getElementById('liveBrowserContent');
+      const baseDelay = (step.delay || 400) / executionSpeed;
+
+      if (step.action === 'navigate') {
+        playBeep(450, 'sine', 0.08);
+        loadSelectedTemplate(step.template);
+        await sleep(baseDelay);
+      }
+
+      else if (step.action === 'highlight') {
+        const el = container.querySelector(step.selector);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const wrapperRect = wrapper.getBoundingClientRect();
+          const targetX = rect.left - wrapperRect.left + (rect.width / 2);
+          const targetY = rect.top - wrapperRect.top + (rect.height / 2);
+
+          showAgentCursor(targetX, targetY, `Focus: ${step.selector}`);
+          playBeep(520, 'sine', 0.04);
+          
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          el.classList.add('ring-2', 'ring-cyan-400', 'ring-offset-2', 'ring-offset-slate-900');
+          await sleep(baseDelay);
+          el.classList.remove('ring-2', 'ring-cyan-400', 'ring-offset-2', 'ring-offset-slate-900');
+        }
+      }
+
+      else if (step.action === 'type') {
+        const el = container.querySelector(step.selector);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const wrapperRect = wrapper.getBoundingClientRect();
+          const targetX = rect.left - wrapperRect.left + (rect.width / 2);
+          const targetY = rect.top - wrapperRect.top + (rect.height / 2);
+
+          showAgentCursor(targetX, targetY, `Typing...`);
+          el.focus();
+          el.value = '';
+
+          // Realistic typing cadence simulation
+          for (let i = 0; i < step.text.length; i++) {
+            if (stopRequested) break;
+            el.value += step.text[i];
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            playBeep(700 + Math.random() * 80, 'sine', 0.02);
+            await sleep(40 / executionSpeed);
+          }
+          await sleep(baseDelay);
+        }
+      }
+
+      else if (step.action === 'click') {
+        const el = container.querySelector(step.selector);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          const wrapperRect = wrapper.getBoundingClientRect();
+          const targetX = rect.left - wrapperRect.left + (rect.width / 2);
+          const targetY = rect.top - wrapperRect.top + (rect.height / 2);
+
+          showAgentCursor(targetX, targetY, `Clicking`);
+          await sleep(200 / executionSpeed);
+
+          triggerClickRipple(targetX, targetY);
+          el.click();
+          if (el.type === 'checkbox') {
+            el.checked = !el.checked;
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+          await sleep(baseDelay);
+        }
+      }
+
+      else if (step.action === 'patch') {
+        const el = container.querySelector(step.selector);
+        if (el) {
+          playBeep(650, 'triangle', 0.07);
+          mutationCounter++;
+          document.getElementById('mutationCount').textContent = mutationCounter;
+
+          if (step.patchType === 'addClass' && step.className) {
+            step.className.split(' ').forEach(cls => cls && el.classList.add(cls));
+          } else if (step.patchType === 'removeClass' && step.className) {
+            step.className.split(' ').forEach(cls => cls && el.classList.remove(cls));
+          } else if (step.patchType === 'replaceText') {
+            el.textContent = step.text;
+          } else if (step.patchType === 'replaceHtml') {
+            el.innerHTML = step.html;
+          }
+          await sleep(baseDelay);
+        }
+      }
+
+      else if (step.action === 'evaluate' && step.script) {
+        try {
+          eval(step.script);
+        } catch (e) {
+          console.warn('Script execution warning:', e);
+        }
+        await sleep(baseDelay);
+      }
+
+      markChatStepStatus(index, 'DONE');
+    }
+
+    function toggleStepThrough() {
+      stepThroughMode = !stepThroughMode;
+      const btn = document.getElementById('stepThroughBtn');
+      const text = document.getElementById('stepThroughText');
+      const icon = document.getElementById('stepThroughIcon');
+      if (stepThroughMode) {
+        btn.className = "flex items-center gap-1 px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-500 text-cyan-300 text-[11px] font-semibold transition";
+        text.textContent = 'DEBUGGER: ON';
+        icon.textContent = '⏸';
+      } else {
+        btn.className = "flex items-center gap-1 px-2 py-0.5 rounded bg-gray-900 border border-gray-800 text-gray-400 hover:text-cyan-300 text-[11px] transition";
+        text.textContent = 'DEBUGGER: OFF';
+        icon.textContent = '⏸';
+        if (stepApprovalResolver) {
+          approveCurrentStep();
+        }
+      }
+    }
+
+    function approveCurrentStep() {
+      if (stepApprovalResolver) {
+        const resolve = stepApprovalResolver;
+        stepApprovalResolver = null;
+        const dbg = document.getElementById('debuggerControls');
+        if (dbg) dbg.classList.add('hidden');
+        resolve();
+      }
+    }
+
+    function resumeContinuous() {
+      toggleStepThrough();
+      approveCurrentStep();
+    }
+
+    function waitForStepApproval(step, index, total) {
+      return new Promise((resolve) => {
+        stepApprovalResolver = resolve;
+        const dbg = document.getElementById('debuggerControls');
+        if (dbg) dbg.classList.remove('hidden');
+        document.getElementById('hudActionLabel').textContent = `[PAUSED] Step ${index + 1}/${total}: ${step.label || step.action} ${step.selector || ''}`;
+        playBeep(520, 'triangle', 0.08);
+      });
+    }
+
+    function exportSessionSnapshot() {
+      const liveDom = document.getElementById('liveBrowserContent')?.innerHTML || '';
+      const payload = {
+        app: 'Amicus Web Assistant™',
+        system: 'WebDaaS™ Live Agent Browser',
+        version: '0.1.0',
+        exportedAt: new Date().toISOString(),
+        activeTemplate: currentTemplate,
+        totalMutations: mutationCounter,
+        lastExecutedPlan: lastExecutedPlan,
+        sessionHistory: sessionHistoryLog,
+        renderedDomSnapshot: liveDom
+      };
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `amicus-agent-audit-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Orchestrate full plan
+    async function runPlan(plan) {
+      isAutomating = true;
+      stopRequested = false;
+      lastExecutedPlan = plan;
+      sessionHistoryLog.push({
+        timestamp: new Date().toISOString(),
+        intent: plan.summary,
+        stepsCount: plan.steps ? plan.steps.length : 0
+      });
+
+      document.getElementById('stopBtn').classList.remove('hidden');
+      document.getElementById('sendBtn').classList.add('hidden');
+      document.getElementById('agentStatusDot').className = 'w-2 h-2 rounded-full bg-cyan-400 animate-ping';
+      document.getElementById('agentStatusText').textContent = 'EXECUTING ACTIONS';
+      document.getElementById('browserState').textContent = 'AGENT IN CONTROL';
+
+      appendAgentPlanCard(plan.summary, plan.steps);
+
+      for (let i = 0; i < plan.steps.length; i++) {
+        if (stopRequested) break;
+        if (stepThroughMode) {
+          await waitForStepApproval(plan.steps[i], i, plan.steps.length);
+          if (stopRequested) break;
+        }
+        await executeStep(plan.steps[i], i, plan.steps.length);
+      }
+
+      isAutomating = false;
+      document.getElementById('stopBtn').classList.add('hidden');
+      document.getElementById('sendBtn').classList.remove('hidden');
+      document.getElementById('agentStatusDot').className = 'w-2 h-2 rounded-full bg-emerald-400';
+      document.getElementById('agentStatusText').textContent = 'STANDBY / READY';
+      document.getElementById('browserState').textContent = 'IDLE (READY)';
+      hideHud();
+      hideAgentCursor();
+    }
+
+    function stopAutomation() {
+      stopRequested = true;
+      if (stepApprovalResolver) approveCurrentStep();
+      hideHud();
+      hideAgentCursor();
+      document.getElementById('agentStatusText').textContent = 'HALTED BY USER';
+    }
+
+    // Chat Submission Handler
+    async function handleChatSubmit(event) {
+      if (event) event.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text || isAutomating) return;
+
+      appendUserMessage(text);
+      input.value = '';
+
+      // Plan actions via backend API
+      try {
+        const res = await fetch('/api/v1/assistant/browser/plan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ intent: text, currentTemplate })
+        });
+
+        if (res.ok) {
+          const plan = await res.json();
+          runPlan(plan);
+          return;
+        } else {
+          const errData = await res.json();
+          showErrorBubble(errData.error || 'Automation planning failed');
+          return;
+        }
+      } catch (err) {
+        // Fallback local planner if server is offline
+        const localPlan = localFallbackPlanner(text);
+        runPlan(localPlan);
+      }
+    }
+
+    function dispatchQuickAction(intent) {
+      if (isAutomating) return;
+      document.getElementById('chatInput').value = intent;
+      handleChatSubmit();
+    }
+
+    function showErrorBubble(msg) {
+      const chat = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'flex items-start gap-2';
+      div.innerHTML = `
+        <div class="bg-red-950/80 border border-red-800 text-red-300 rounded-xl p-3 text-xs font-mono">
+          ⚠️ ${escapeHtml(msg)}
+        </div>
+      `;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function clearChat() {
+      const chat = document.getElementById('chatMessages');
+      chat.innerHTML = '';
+      init();
+    }
+
+    // Local fallback planner in case backend fetch is interrupted
+    function localFallbackPlanner(intent) {
+      const prompt = intent.toLowerCase();
+      if (prompt.includes('fill') || prompt.includes('checkout') || prompt.includes('form') || prompt.includes('buy')) {
+        return {
+          summary: 'Auto-fill customer credentials, accept terms, and submit payment.',
+          steps: [
+            { action: 'highlight', selector: '#cust-name', label: 'Name Field' },
+            { action: 'type', selector: '#cust-name', text: 'Van Newborn' },
+            { action: 'highlight', selector: '#cust-email', label: 'Email Field' },
+            { action: 'type', selector: '#cust-email', text: 'van@amicus-technology.net' },
+            { action: 'highlight', selector: '#card-number', label: 'Card Number' },
+            { action: 'type', selector: '#card-number', text: '4242 4242 4242 4242' },
+            { action: 'click', selector: '#terms-checkbox', label: 'Agree Terms' },
+            { action: 'highlight', selector: '#btn-submit-order', label: 'Submit Button' },
+            { action: 'click', selector: '#btn-submit-order', label: 'Submit Order' },
+            { action: 'patch', selector: '#order-status-banner', patchType: 'removeClass', className: 'hidden' }
+          ]
+        };
+      }
+      return {
+        summary: `Autonomous inspection on instruction: "${intent}"`,
+        steps: [
+          { action: 'highlight', selector: 'body', label: 'Inspecting Viewport' },
+          { action: 'evaluate', script: 'console.log("Telemetry captured")', label: 'Telemetry Probe' }
+        ]
+      };
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[m]);
+    }
+
+    // Global Key Listener for Spacebar Step Trigger
+    window.addEventListener('keydown', (e) => {
+      const isInputActive = ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
+      if (!isInputActive && e.code === 'Space' && stepApprovalResolver) {
+        e.preventDefault();
+        approveCurrentStep();
+      }
+    });
+
+    // Boot
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

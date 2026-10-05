@@ -1,0 +1,820 @@
+<!-- Copyright (c) 2026 Amicus Technology Services Inc. All Rights Reserved. -->
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amicus Web Assistant™ | Enterprise Autonomous WebDaaS™ Platform</title>
+  <meta name="description" content="Amicus Web Assistant™ — Autonomous Web Development Assistant as a Service (WebDaaS™) by Amicus Technology Services Inc. Texas Registered Corporation.">
+  <link rel="canonical" href="https://amicusweb.dev">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Consolas', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              400: '#60a5fa',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#1e3a8a',
+              950: '#0a0f1d'
+            },
+            accent: {
+              cyan: '#06b6d4',
+              emerald: '#10b981',
+              violet: '#8b5cf6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --card-bg: rgba(15, 23, 42, 0.65);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --primary-glow: rgba(59, 130, 246, 0.35);
+      --cyan-glow: rgba(6, 182, 212, 0.25);
+    }
+    body {
+      background-color: var(--bg-dark);
+      color: #f1f5f9;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    .tactical-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+    .glow-radial {
+      background: radial-gradient(circle, var(--primary-glow) 0%, rgba(7, 11, 20, 0) 70%);
+    }
+    .glow-cyan {
+      background: radial-gradient(circle, var(--cyan-glow) 0%, rgba(7, 11, 20, 0) 70%);
+    }
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+    }
+    .glass-card:hover {
+      border-color: rgba(96, 165, 250, 0.35);
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070b14; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
+  </style>
+</head>
+<body class="min-h-screen tactical-grid selection:bg-blue-600/40 selection:text-white flex flex-col">
+
+  <!-- TOP LEGITIMACY TICKER BAR -->
+  <div class="bg-slate-950 border-b border-slate-800 text-[11px] font-mono py-1.5 px-4 text-slate-300">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center space-x-3">
+        <span class="inline-flex items-center px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/80">
+          <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+          OFFICIAL CORPORATE PORTAL
+        </span>
+        <span class="hidden sm:inline text-slate-400">Amicus Technology Services Inc. &bull; Austin &amp; Red Oak, TX</span>
+      </div>
+      <div class="flex items-center space-x-4 text-slate-400">
+        <span class="hidden md:inline">D-U-N-S Registered</span>
+        <span>•</span>
+        <span class="hidden md:inline">Texas Registered C-Corp</span>
+        <span>•</span>
+        <span class="text-emerald-400 font-semibold">99.99% SLA Active</span>
+        <span>•</span>
+        <a href="tel:+12142336185" class="text-slate-300 hover:text-white transition">+1 (214) 233-6185</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN HEADER / NAVIGATION -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="/" class="flex items-center space-x-3 group">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-cyan-400 flex items-center justify-center font-black text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="text-lg font-extrabold tracking-tight text-white group-hover:text-blue-400 transition">
+              Amicus Web Assistant™
+            </span>
+            <span class="text-[10px] font-bold font-mono px-2 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-800">
+              WebDaaS™
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-400 font-medium">By Amicus Technology Services Inc.</p>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden lg:flex items-center space-x-6 text-xs font-semibold text-slate-300">
+        <a href="#features" class="hover:text-white transition">Features</a>
+        <a href="/browser" class="hover:text-cyan-400 transition flex items-center space-x-1">
+          <span>🤖</span>
+          <span>Live Browser</span>
+        </a>
+        <a href="/web-studio" class="hover:text-blue-400 transition flex items-center space-x-1">
+          <span>⚡</span>
+          <span>Web Studio™</span>
+        </a>
+        <a href="/standing" class="hover:text-indigo-300 transition flex items-center space-x-1">
+          <span>🛡️</span>
+          <span>Legitimacy Sentinel</span>
+        </a>
+        <a href="/trust" class="hover:text-emerald-400 transition flex items-center space-x-1">
+          <span>🔒</span>
+          <span>Trust Center</span>
+        </a>
+        <a href="#pricing" class="hover:text-white transition">Pricing</a>
+        <a href="#faq" class="hover:text-white transition">FAQ</a>
+      </nav>
+
+      <!-- Action Buttons -->
+      <div class="flex items-center space-x-3">
+        <a href="/browser" class="hidden sm:inline-flex items-center px-3.5 py-2 rounded-lg text-xs font-bold text-cyan-300 bg-cyan-950/60 border border-cyan-800/60 hover:bg-cyan-900/60 transition">
+          🤖 Agent Browser
+        </a>
+        <a href="/web-studio" class="inline-flex items-center px-4 py-2 rounded-lg text-xs font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/30 transition">
+          ⚡ Launch Studio™
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="relative overflow-hidden pt-20 pb-24 border-b border-slate-800/80">
+    <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] glow-radial pointer-events-none -z-10 blur-3xl opacity-70"></div>
+    <div class="absolute top-1/3 right-1/4 w-[400px] h-[400px] glow-cyan pointer-events-none -z-10 blur-3xl opacity-50"></div>
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+      
+      <!-- Trust Pill -->
+      <div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-blue-950/80 text-blue-300 border border-blue-800 shadow-inner">
+        <span>🏛️ Texas Registered C-Corp</span>
+        <span class="text-slate-500">&bull;</span>
+        <span>🛡️ Autonomous Web Development as a Service</span>
+        <span class="text-slate-500">&bull;</span>
+        <span class="text-emerald-400 font-bold">100% Client IP Ownership</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="text-4xl sm:text-6xl font-black tracking-tight text-white leading-[1.1]">
+        Your Autonomous AI Web Engineering Partner.<br>
+        <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-300">
+          From Architecture to Production.
+        </span>
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="text-base sm:text-lg text-slate-300 max-w-3xl mx-auto leading-relaxed">
+        Amicus Web Assistant™ is the flagship WebDaaS™ platform created by <strong>Amicus Technology Services Inc.</strong> We synthesize clean modular code, execute headless browser verifications, patch live codebases via surgical AST diffs, and safeguard your intellectual property with immutable cryptographic provenance.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-wrap justify-center items-center gap-4 pt-4">
+        <a href="/browser" class="px-6 py-3.5 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 shadow-xl shadow-cyan-500/20 flex items-center space-x-2 transition transform hover:-translate-y-0.5">
+          <span>🤖 Launch Live Agent Browser Deck</span>
+          <span class="text-xs opacity-80 font-mono">[Side-by-Side]</span>
+        </a>
+        <a href="/web-studio" class="px-6 py-3.5 rounded-xl font-bold text-sm text-slate-100 bg-slate-900 border border-slate-700 hover:border-blue-500 hover:bg-slate-800 flex items-center space-x-2 transition transform hover:-translate-y-0.5">
+          <span>⚡ Open Amicus Web Studio™</span>
+          <span class="text-xs text-blue-400 font-mono">[Synthesizer]</span>
+        </a>
+        <a href="/trust" class="px-5 py-3.5 rounded-xl font-semibold text-sm text-slate-300 hover:text-white bg-slate-950/60 border border-slate-800 hover:border-slate-700 flex items-center space-x-2 transition">
+          <span>🔒 Enterprise Trust Center</span>
+        </a>
+      </div>
+
+      <!-- Early Access / Developer Activation Form -->
+      <div class="max-w-md mx-auto pt-6">
+        <form class="flex p-1.5 bg-slate-900/90 border border-slate-800 rounded-xl shadow-2xl focus-within:border-blue-500 transition" onsubmit="event.preventDefault(); alert('Thank you! Your enterprise developer preview invitation has been registered with Amicus Technology Services Inc.');">
+          <input type="email" placeholder="Enter corporate or work email..." required class="flex-1 bg-transparent px-4 py-2.5 text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none font-mono">
+          <button type="submit" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-lg transition">
+            Get Access
+          </button>
+        </form>
+        <p class="text-[11px] text-slate-500 mt-2 font-mono">Zero spam &bull; Enterprise SOC-2 &amp; GDPR compliant privacy</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CORPORATE CREDIBILITY & LEGITIMACY PILLARS BAR -->
+  <section class="border-b border-slate-800/80 bg-slate-950/90 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <span class="text-[11px] font-mono uppercase tracking-widest text-blue-400 font-bold">The Amicus Enterprise Standard</span>
+        <h2 class="text-2xl font-bold text-white mt-1">Built on Certified Corporate Governance &amp; Security</h2>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        
+        <div class="glass-card rounded-xl p-4 text-center space-y-2">
+          <div class="text-2xl">🏛️</div>
+          <div class="text-xs font-bold text-white">Texas C-Corp</div>
+          <p class="text-[11px] text-slate-400 leading-tight">Registered &amp; Good Standing in Texas</p>
+        </div>
+
+        <div class="glass-card rounded-xl p-4 text-center space-y-2">
+          <div class="text-2xl">📑</div>
+          <div class="text-xs font-bold text-white">D-U-N-S Verified</div>
+          <p class="text-[11px] text-slate-400 leading-tight">Commercial Credit &amp; Bureau Tracked</p>
+        </div>
+
+        <div class="glass-card rounded-xl p-4 text-center space-y-2">
+          <div class="text-2xl">🛡️</div>
+          <div class="text-xs font-bold text-white">$2M Tech E&amp;O</div>
+          <p class="text-[11px] text-slate-400 leading-tight">Top-Tier Cyber &amp; Errors Coverage</p>
+        </div>
+
+        <div class="glass-card rounded-xl p-4 text-center space-y-2">
+          <div class="text-2xl">🔒</div>
+          <div class="text-xs font-bold text-white">Zero AI Retention</div>
+          <p class="text-[11px] text-slate-400 leading-tight">Client Code is Never Used in AI Training</p>
+        </div>
+
+        <div class="glass-card rounded-xl p-4 text-center space-y-2">
+          <div class="text-2xl">⛓️</div>
+          <div class="text-xs font-bold text-white">SHA-256 Ledger</div>
+          <p class="text-[11px] text-slate-400 leading-tight">Cryptographic Code Authorship Record</p>
+        </div>
+
+        <div class="glass-card rounded-xl p-4 text-center space-y-2">
+          <div class="text-2xl">⚡</div>
+          <div class="text-xs font-bold text-white">99.99% SLA</div>
+          <p class="text-[11px] text-slate-400 leading-tight">Multi-Region Redundant Cloud Edge</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- PLATFORM CAPABILITIES & ARCHITECTURE -->
+  <section id="features" class="py-20 border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      
+      <div class="text-center max-w-3xl mx-auto space-y-3">
+        <span class="text-xs font-mono uppercase tracking-widest text-cyan-400 font-bold">Autonomous Engineering Engine</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Engineered for Flawless Speed, Precision &amp; Control</h2>
+        <p class="text-sm text-slate-400">
+          Say goodbye to flaky AI snippets and hallucinations. Amicus Web Assistant™ uses deterministic AST parsing, automated verification sandboxes, and continuous nocturnal discovery.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Feature 1: WebDaaS Synthesizer -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 hover:border-blue-500/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-blue-950 text-blue-400 flex items-center justify-center text-2xl font-bold border border-blue-800">
+            ⚡
+          </div>
+          <h3 class="text-lg font-bold text-white">WebDaaS™ Autonomous Synthesizer</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Generate clean, modern, accessible HTML5, Tailwind CSS, React, or Vue interfaces in seconds. Built from ground up to satisfy modern Baseline web standards without bloated dependencies.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-blue-300">
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Tailwind CSS</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">HTML5 Semantic</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">React/Vue</span>
+          </div>
+        </div>
+
+        <!-- Feature 2: AST Surgical Code Patcher -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 hover:border-cyan-500/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-cyan-950 text-cyan-400 flex items-center justify-center text-2xl font-bold border border-cyan-800">
+            🔬
+          </div>
+          <h3 class="text-lg font-bold text-white">AST Surgical Code Patcher</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Never overwrite an entire file again. Amicus isolates the exact target blocks using Abstract Syntax Tree (AST) matching, producing pristine, review-ready Git diffs with zero drift.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-cyan-300">
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Exact Chunk Diffs</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Git Clean</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Zero Hallucinations</span>
+          </div>
+        </div>
+
+        <!-- Feature 3: Automated Browser Verification -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 hover:border-indigo-500/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-indigo-950 text-indigo-400 flex items-center justify-center text-2xl font-bold border border-indigo-800">
+            🤖
+          </div>
+          <h3 class="text-lg font-bold text-white">Side-by-Side Agent Browser Deck</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Watch the AI agent drive interactive web sessions in real-time. Automated form filling, checkout testing, layout verification, and a11y color contrast auditing in an interactive deck.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-indigo-300">
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Interactive Cursors</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">WCAG 2.1 AA</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Live Console Logs</span>
+          </div>
+        </div>
+
+        <!-- Feature 4: Nocturnal Autonomous Intelligence -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 hover:border-purple-500/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-purple-950 text-purple-400 flex items-center justify-center text-2xl font-bold border border-purple-800">
+            🌙
+          </div>
+          <h3 class="text-lg font-bold text-white">Nocturnal Autonomous Intelligence</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            While you sleep, our nocturnal engine scans external providers, benchmarks APIs, evaluates infrastructure, and identifies cost-to-speed optimizations for your architecture.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-purple-300">
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Zero-Touch Discovery</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">EOL Lifecycle Radar</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Morning Briefing</span>
+          </div>
+        </div>
+
+        <!-- Feature 5: BYO DNS & Domain Management -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 hover:border-emerald-500/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-emerald-950 text-emerald-400 flex items-center justify-center text-2xl font-bold border border-emerald-800">
+            🌐
+          </div>
+          <h3 class="text-lg font-bold text-white">BYO DNS &amp; Instant Domains</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            Bring your own domain (`yourcompany.com`, `amicusweb.dev`, or `amicus-technology.net`) with automated cryptographic verification tokens, TLS 1.3 certificates, and DNS health audits.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-emerald-300">
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Automated SSL</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">SPF/DKIM/DMARC</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Zero-Downtime Cutover</span>
+          </div>
+        </div>
+
+        <!-- Feature 6: Fortified IP & Provenance Sentinel -->
+        <div class="glass-card rounded-2xl p-6 space-y-4 hover:border-rose-500/50 transition">
+          <div class="w-12 h-12 rounded-xl bg-rose-950 text-rose-400 flex items-center justify-center text-2xl font-bold border border-rose-800">
+            🛡️
+          </div>
+          <h3 class="text-lg font-bold text-white">Fortified IP &amp; Provenance Sentinel</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">
+            100% Client Ownership guarantee. Every code change is cryptographically watermarked and recorded into an immutable provenance ledger to protect trade secrets and copyright.
+          </p>
+          <div class="pt-2 flex flex-wrap gap-2 text-[10px] font-mono text-rose-300">
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">100% Client IP</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Merkle Proofs</span>
+            <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-800">Audit Ready</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE CORPORATE STANDING DOSSIER PREVIEW -->
+  <section class="py-16 bg-slate-900/40 border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 rounded-3xl p-8 lg:p-12 shadow-2xl relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <div class="lg:col-span-7 space-y-5">
+            <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span>Verified Commercial Standing Dossier</span>
+            </div>
+            <h2 class="text-3xl font-extrabold text-white">
+              Enterprise Standing, Good Standing &amp; Commercial Transparency
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              We believe true technological capability must be backed by institutional transparency. Amicus Technology Services Inc. maintains an active corporate standing in Texas, verifiable commercial credit lines, enterprise cybersecurity insurance, and full federal compliance readiness.
+            </p>
+            <div class="flex flex-wrap gap-4 pt-2">
+              <a href="/standing" class="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md transition flex items-center space-x-2">
+                <span>📊 Open Live Standing Dashboard</span>
+                <span>&rarr;</span>
+              </a>
+              <a href="/trust" class="px-5 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition">
+                <span>📑 Request Enterprise Vendor Packet</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 bg-slate-950/80 border border-slate-800 rounded-2xl p-6 font-mono text-xs space-y-3 shadow-xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <span class="text-slate-400">Legal Entity</span>
+              <span class="text-white font-bold">Amicus Technology Services Inc.</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <span class="text-slate-400">Jurisdiction</span>
+              <span class="text-emerald-400 font-bold">Texas, USA (Active)</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <span class="text-slate-400">Headquarters</span>
+              <span class="text-slate-200">Austin, TX 78731</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <span class="text-slate-400">Operational Center</span>
+              <span class="text-slate-200">Red Oak, TX, USA</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <span class="text-slate-400">Commercial Phone</span>
+              <span class="text-cyan-400 font-bold">+1 (214) 233-6185</span>
+            </div>
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <span class="text-slate-400">Corporate Email</span>
+              <span class="text-indigo-300">admin@amicus-technology.net</span>
+            </div>
+            <div class="flex justify-between items-center pt-1">
+              <span class="text-slate-400">Insurance Coverage</span>
+              <span class="text-emerald-400 font-bold">$2,000,000 Tech E&amp;O</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING & 1-CLICK EXPRESS CHECKOUT -->
+  <section id="pricing" class="py-20 border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      
+      <div class="text-center max-w-3xl mx-auto space-y-3">
+        <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-800">
+          <span>💳 Instant 1-Click Activation</span>
+        </div>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-white">Transparent, Enterprise-Ready Pricing</h2>
+        <p class="text-sm text-slate-400">
+          Zero long-term lock-in. 14-day money back guarantee. Pay with Link by Stripe, Apple Pay, Google Pay, PayPal, or major corporate cards.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        
+        <!-- Tier 1: Developer License -->
+        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <h3 class="text-xl font-bold text-white">Developer License</h3>
+            <p class="text-xs text-slate-400">For solo engineers, founders, and contract developers.</p>
+            <div class="flex items-baseline space-x-1">
+              <span class="text-4xl font-extrabold text-white">$29</span>
+              <span class="text-xs text-slate-400">/ month</span>
+            </div>
+            <hr class="border-slate-800">
+            <ul class="space-y-3 text-xs text-slate-300">
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>Autonomous Component Synthesizer</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>AST Surgical Code Patcher</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>Responsive &amp; a11y Automated Verifier</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>100% Commercial Code Ownership</span>
+              </li>
+            </ul>
+          </div>
+          <button onclick="openCheckoutModal('Developer License', 29)" class="w-full py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700 hover:border-slate-600 transition">
+            Subscribe $29 / month &rarr;
+          </button>
+        </div>
+
+        <!-- Tier 2: Pro Agency & Team (Featured) -->
+        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between space-y-6 border-blue-500/60 bg-blue-950/20 relative shadow-2xl shadow-blue-500/10">
+          <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-extrabold uppercase px-3 py-1 rounded-full shadow-md">
+            MOST POPULAR
+          </span>
+          <div class="space-y-4">
+            <h3 class="text-xl font-bold text-blue-400">Pro Agency &amp; Team</h3>
+            <p class="text-xs text-slate-300">For fast-shipping agencies, engineering teams, and SaaS products.</p>
+            <div class="flex items-baseline space-x-1">
+              <span class="text-4xl font-extrabold text-white">$99</span>
+              <span class="text-xs text-slate-400">/ month</span>
+            </div>
+            <hr class="border-blue-900/60">
+            <ul class="space-y-3 text-xs text-slate-200">
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span><strong>Everything in Developer License</strong></span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>Fullstack API Scaffolding (Express / REST)</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>Nocturnal Autonomous Intelligence Engine</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>Cryptographic IP Provenance Sentinel</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>BYO Custom DNS &amp; Domain SSL Management</span>
+              </li>
+            </ul>
+          </div>
+          <button onclick="openCheckoutModal('Pro Agency & Team', 99)" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 transition">
+            Instant 1-Click Checkout $99 &rarr;
+          </button>
+        </div>
+
+        <!-- Tier 3: Enterprise Custom -->
+        <div class="glass-card rounded-2xl p-8 flex flex-col justify-between space-y-6">
+          <div class="space-y-4">
+            <h3 class="text-xl font-bold text-white">Enterprise Dedicated</h3>
+            <p class="text-xs text-slate-400">For large scale enterprises, healthcare, and custom deployments.</p>
+            <div class="flex items-baseline space-x-1">
+              <span class="text-3xl font-extrabold text-white">Custom SLA</span>
+            </div>
+            <hr class="border-slate-800">
+            <ul class="space-y-3 text-xs text-slate-300">
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>Dedicated Isolated Cloud / Private VPC</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>HIPAA BAA &amp; Custom SOC-2 Compliance Pack</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>Custom LLM Router &amp; On-Prem Models</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="text-emerald-400 font-bold">✓</span>
+                <span>Dedicated Enterprise Solutions Architect</span>
+              </li>
+            </ul>
+          </div>
+          <a href="mailto:admin@amicus-technology.net?subject=Enterprise%20Dedicated%20Inquiry" class="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 font-bold text-xs border border-slate-700 text-center transition">
+            Contact Enterprise Sales &rarr;
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Express Checkout Brands Bar -->
+      <div class="pt-4 text-center">
+        <p class="text-xs text-slate-400 mb-3 font-mono">Supported Zero-Friction 1-Click Payment Gateways:</p>
+        <div class="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-300">
+          <span class="inline-flex items-center px-3 py-1 rounded bg-slate-900 border border-slate-800 text-emerald-400 font-bold">⚡ Link by Stripe</span>
+          <span class="inline-flex items-center px-3 py-1 rounded bg-slate-900 border border-slate-800 text-white font-bold"> Apple Pay</span>
+          <span class="inline-flex items-center px-3 py-1 rounded bg-slate-900 border border-slate-800 text-blue-400 font-bold">G Pay</span>
+          <span class="inline-flex items-center px-3 py-1 rounded bg-slate-900 border border-slate-800 text-cyan-400 font-bold">PayPal Express</span>
+          <span class="inline-flex items-center px-3 py-1 rounded bg-slate-900 border border-slate-800 text-slate-400 font-bold">Corporate Visa / MC / Amex</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FAQ SECTION -->
+  <section id="faq" class="py-20 border-b border-slate-800/80">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      
+      <div class="text-center space-y-2">
+        <span class="text-xs font-mono uppercase tracking-widest text-blue-400 font-bold">Got Questions?</span>
+        <h2 class="text-3xl font-extrabold text-white">Frequently Asked Questions</h2>
+      </div>
+
+      <div class="space-y-4">
+        
+        <details class="glass-card rounded-xl p-5 group cursor-pointer">
+          <summary class="text-sm font-bold text-white flex justify-between items-center select-none">
+            <span>What is Amicus Technology Services Inc.?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition">&darr;</span>
+          </summary>
+          <p class="text-xs text-slate-300 mt-3 leading-relaxed">
+            Amicus Technology Services Inc. is a registered Texas corporation based in Austin and Red Oak, Texas. We build autonomous web engineering agents, WebDaaS™ orchestration platforms, and cryptographic IP verification systems for enterprises, agencies, and solo founders.
+          </p>
+        </details>
+
+        <details class="glass-card rounded-xl p-5 group cursor-pointer">
+          <summary class="text-sm font-bold text-white flex justify-between items-center select-none">
+            <span>Who owns the code and components generated by Amicus?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition">&darr;</span>
+          </summary>
+          <p class="text-xs text-slate-300 mt-3 leading-relaxed">
+            You do — 100%. All code, components, architectures, and layouts synthesized by Amicus Web Assistant™ are transferred entirely to you under full commercial ownership. We claim zero royalty, licensing fee, or IP stake in your customer deliverables.
+          </p>
+        </details>
+
+        <details class="glass-card rounded-xl p-5 group cursor-pointer">
+          <summary class="text-sm font-bold text-white flex justify-between items-center select-none">
+            <span>Is my proprietary code or business data used to train AI models?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition">&darr;</span>
+          </summary>
+          <p class="text-xs text-slate-300 mt-3 leading-relaxed">
+            <strong>No. Never.</strong> We enforce a strict Zero-Retention AI Policy. All customer code, prompts, and architecture directives execute in isolated environments with enterprise endpoints that strictly prohibit model training on customer data.
+          </p>
+        </details>
+
+        <details class="glass-card rounded-xl p-5 group cursor-pointer">
+          <summary class="text-sm font-bold text-white flex justify-between items-center select-none">
+            <span>How does the Nocturnal Autonomous Intelligence engine operate?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition">&darr;</span>
+          </summary>
+          <p class="text-xs text-slate-300 mt-3 leading-relaxed">
+            Every night at 2:00 AM CST, our nocturnal engine runs automated provider discovery benchmarks, audits DNS and email security configurations, checks dependencies for End-of-Life (EOL) notices, and prepares a morning briefing with actionable architectural improvements.
+          </p>
+        </details>
+
+        <details class="glass-card rounded-xl p-5 group cursor-pointer">
+          <summary class="text-sm font-bold text-white flex justify-between items-center select-none">
+            <span>How do I obtain a Vendor Packet, W-9, or Certificate of Insurance?</span>
+            <span class="text-slate-400 group-open:rotate-180 transition">&darr;</span>
+          </summary>
+          <p class="text-xs text-slate-300 mt-3 leading-relaxed">
+            You can generate and download our comprehensive Enterprise Vendor Packet directly from our <a href="/trust" class="text-blue-400 underline">Trust Center</a> or <a href="/standing" class="text-blue-400 underline">Legitimacy Sentinel</a>, or email our corporate desk at <a href="mailto:admin@amicus-technology.net" class="text-blue-400 underline">admin@amicus-technology.net</a>.
+          </p>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPRESS CHECKOUT MODAL -->
+  <div id="checkoutModalOverlay" style="display: none;" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl text-white relative">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+        <div>
+          <h3 id="modalPlanTitle" class="text-base font-bold text-white">Express Checkout</h3>
+          <span id="modalPlanAmount" class="text-xs text-blue-400 font-mono">$99.00 / month</span>
+        </div>
+        <button onclick="closeCheckoutModal()" class="text-slate-400 hover:text-white text-xl font-bold">&times;</button>
+      </div>
+
+      <!-- 1-Click Pay Options -->
+      <div class="space-y-2 mb-4">
+        <button onclick="simulatePayment('Link by Stripe')" class="w-full py-3 bg-[#00D66F] hover:bg-[#00c063] text-black font-extrabold text-xs rounded-xl flex items-center justify-center space-x-2 transition shadow-md">
+          <span>⚡ Pay with Link</span>
+          <span class="opacity-80 font-normal">(1-Click Stripe)</span>
+        </button>
+
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="simulatePayment('Apple Pay')" class="py-2.5 bg-black hover:bg-slate-950 text-white border border-slate-700 rounded-lg text-xs font-bold transition">
+             Apple Pay
+          </button>
+          <button onclick="simulatePayment('Google Pay')" class="py-2.5 bg-slate-950 hover:bg-black text-white border border-slate-700 rounded-lg text-xs font-bold transition">
+            G Pay
+          </button>
+          <button onclick="simulatePayment('PayPal')" class="py-2.5 bg-[#003087] hover:bg-[#00276e] text-white rounded-lg text-xs font-bold transition">
+            PayPal
+          </button>
+        </div>
+      </div>
+
+      <div class="relative text-center my-4">
+        <hr class="border-slate-800">
+        <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-slate-900 px-3 text-[10px] font-mono text-slate-400 uppercase">Or Pay With Card</span>
+      </div>
+
+      <form onsubmit="event.preventDefault(); simulatePayment('Credit Card');" class="space-y-3">
+        <div>
+          <label class="text-[10px] font-mono text-slate-400 uppercase block mb-1">Corporate or Personal Email</label>
+          <input type="email" placeholder="billing@yourdomain.com" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono">
+        </div>
+        <div>
+          <label class="text-[10px] font-mono text-slate-400 uppercase block mb-1">Card Number</label>
+          <input type="text" placeholder="4242 •••• •••• 4242" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono">
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <input type="text" placeholder="MM / YY" required class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono">
+          <input type="text" placeholder="CVC" required class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 font-mono">
+        </div>
+        <label class="flex items-center space-x-2 text-[11px] text-slate-400 cursor-pointer pt-1">
+          <input type="checkbox" checked class="rounded bg-slate-950 border-slate-800 text-blue-600">
+          <span>Save payment details for 1-click checkout with Link</span>
+        </label>
+        <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-600/30 transition mt-2">
+          Confirm &amp; Start Subscription
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CHECKOUT SCRIPT -->
+  <script>
+    function openCheckoutModal(planName, price) {
+      document.getElementById('modalPlanTitle').innerText = planName;
+      document.getElementById('modalPlanAmount').innerText = '$' + price + '.00 / month (14-Day Guarantee)';
+      document.getElementById('checkoutModalOverlay').style.display = 'flex';
+    }
+    function closeCheckoutModal() {
+      document.getElementById('checkoutModalOverlay').style.display = 'none';
+    }
+    function simulatePayment(method) {
+      alert('Thank you! Payment authorized successfully via ' + method + ' for Amicus Web Assistant™.\nYour account credentials and API activation keys have been provisioned.');
+      closeCheckoutModal();
+    }
+    // Close modal on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeCheckoutModal();
+    });
+  </script>
+
+  <!-- CORPORATE FOOTER -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-16 text-slate-400 text-xs mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        
+        <!-- Company Identity Column -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-sm">
+              ⚡
+            </div>
+            <span class="text-base font-extrabold text-white tracking-tight">Amicus Technology Services Inc.</span>
+          </div>
+          <p class="text-xs text-slate-400 leading-relaxed pr-6">
+            Autonomous Web Engineering as a Service (WebDaaS™). Building resilient, performant, and cryptographically verified digital solutions.
+          </p>
+          <div class="space-y-1.5 text-[11px] font-mono text-slate-400">
+            <p><strong>Headquarters:</strong> 5900 Balcones Drive, STE 100, Austin, TX 78731</p>
+            <p><strong>Operations:</strong> Red Oak, TX, USA</p>
+            <p><strong>Commercial Phone:</strong> <a href="tel:+12142336185" class="text-blue-400 hover:text-white transition">+1 (214) 233-6185</a></p>
+            <p><strong>Corporate Inquiries:</strong> <a href="mailto:admin@amicus-technology.net" class="text-blue-400 hover:text-white transition">admin@amicus-technology.net</a></p>
+            <p><strong>Technical Support:</strong> <a href="mailto:support@amicusweb.dev" class="text-blue-400 hover:text-white transition">support@amicusweb.dev</a></p>
+          </div>
+        </div>
+
+        <!-- Solutions & Products -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-white font-mono">Platforms &amp; Tools</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="/web-studio" class="hover:text-white transition">Amicus Web Studio™</a></li>
+            <li><a href="/browser" class="hover:text-white transition">Live Agent Browser Deck</a></li>
+            <li><a href="/standing" class="hover:text-white transition">Legitimacy Sentinel</a></li>
+            <li><a href="/security-sentinel" class="hover:text-white transition">Vulnerability Radar</a></li>
+            <li><a href="#features" class="hover:text-white transition">WebDaaS™ Engine</a></li>
+          </ul>
+        </div>
+
+        <!-- Trust & Governance -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-white font-mono">Trust &amp; Governance</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="/trust" class="hover:text-white transition">Trust &amp; Compliance Center</a></li>
+            <li><a href="/security" class="hover:text-white transition">Security Architecture</a></li>
+            <li><a href="/privacy" class="hover:text-white transition">Privacy Policy (CCPA/GDPR)</a></li>
+            <li><a href="/terms" class="hover:text-white transition">Terms of Service &amp; SLA</a></li>
+            <li><a href="/.well-known/security.txt" class="hover:text-white transition">RFC 9116 security.txt</a></li>
+          </ul>
+        </div>
+
+        <!-- Domains & Networks -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-white font-mono">Official Domains</h4>
+          <ul class="space-y-2 text-xs font-mono">
+            <li><a href="https://amicusweb.dev" class="text-blue-400 hover:text-white transition">amicusweb.dev</a></li>
+            <li><a href="https://amicus-technology.net" class="text-indigo-400 hover:text-white transition">amicus-technology.net</a></li>
+            <li><a href="https://app.amicusweb.dev" class="text-slate-400 hover:text-white transition">app.amicusweb.dev</a></li>
+            <li class="pt-2">
+              <span class="inline-flex items-center px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 text-[10px] border border-emerald-800">
+                SSL TLS 1.3 Certified
+              </span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div class="border-t border-slate-800/80 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-slate-500">
+        <div>
+          &copy; 2026 Amicus Technology Services Inc. All Rights Reserved. &bull; Texas Secretary of State Registered Corporation &bull; Austin &amp; Red Oak, TX.
+        </div>
+        <div class="text-right">
+          Amicus Web Assistant™ and WebDaaS™ are proprietary trademarks. Protected under U.S. and International Copyright and Trade Secret laws.
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+</body>
+</html>

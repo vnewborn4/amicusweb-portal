@@ -1,0 +1,303 @@
+<!-- Copyright (c) 2026 Amicus Technology Services Inc. All Rights Reserved. -->
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amicus Corporate Legitimacy & Standing Sentinel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#1e1b4b'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-900/70 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/30">
+          🛡️
+        </div>
+        <div>
+          <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-300">
+            Amicus Legitimacy Sentinel™
+          </h1>
+          <p class="text-xs text-slate-400">Enterprise Standing & Commercial Credit Automation</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <a href="/" class="text-xs font-semibold text-slate-300 hover:text-white transition hidden md:inline">&larr; Home</a>
+        <a href="/trust" class="text-xs font-semibold text-slate-300 hover:text-white transition hidden md:inline">Trust Center</a>
+        <a href="/security" class="text-xs font-semibold text-slate-300 hover:text-white transition hidden md:inline">Security</a>
+        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-950 text-emerald-400 border border-emerald-800">
+          <span class="w-1.5 h-1.5 mr-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+          Autonomous Sentinel Active
+        </span>
+        <button id="runAuditBtn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-semibold shadow-md transition-all flex items-center space-x-2">
+          <span>⚡ Run Live Audit</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Top Hero Metric Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      
+      <!-- Overall Legitimacy Score -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 relative overflow-hidden shadow-xl">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Legitimacy Index</span>
+          <span id="ratingBadge" class="text-xs px-2 py-0.5 rounded bg-indigo-900/60 text-indigo-300 border border-indigo-700">Loading...</span>
+        </div>
+        <div class="mt-4 flex items-baseline space-x-2">
+          <span id="scoreValue" class="text-5xl font-extrabold text-white">--</span>
+          <span class="text-xl text-slate-400">/ 100</span>
+        </div>
+        <div class="mt-4 w-full bg-slate-800 rounded-full h-2">
+          <div id="scoreBar" class="bg-gradient-to-r from-indigo-500 to-emerald-400 h-2 rounded-full transition-all duration-1000" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- D&B & DUNS Status -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">D-U-N-S & Credit Bureau</div>
+        <div id="dunsDisplay" class="mt-4 text-2xl font-bold text-white">Pending</div>
+        <p class="text-xs text-slate-400 mt-2">D&B PAYDEX Target: <span class="text-emerald-400 font-bold">80+ (Tier-1)</span></p>
+      </div>
+
+      <!-- SAM.gov & Federal Identifier -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">SAM.gov UEI / CAGE</div>
+        <div id="samDisplay" class="mt-4 text-2xl font-bold text-white">Ready to File</div>
+        <p class="text-xs text-slate-400 mt-2">Federal & Institutional Vetting</p>
+      </div>
+
+      <!-- Active Trade Lines -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Net-30 Trade Lines</div>
+        <div id="tradeLineCount" class="mt-4 text-2xl font-bold text-emerald-400">3 Active / 2 Applied</div>
+        <p class="text-xs text-slate-400 mt-2">Uline, Grainger, Quill + 2</p>
+      </div>
+
+    </div>
+
+    <!-- Middle Section: Detailed Pillars & Action Items -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- 5 Pillars Breakdown -->
+      <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+          <span>📊 Legitimacy Pillars & Compliance Scorecard</span>
+        </h2>
+        <div id="pillarsContainer" class="space-y-4">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Daily Automated Action Items -->
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6 flex flex-col justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
+            <span>🎯 Priority Standing Boosters</span>
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">Autonomous recommendations to reach enterprise rating</p>
+          <div id="actionList" class="mt-4 space-y-3">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+        
+        <div class="pt-4 border-t border-slate-800">
+          <button id="downloadVendorPacketBtn" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-indigo-300 hover:text-white rounded-lg text-xs font-bold border border-slate-700 transition flex items-center justify-center space-x-2">
+            <span>📄 Export Enterprise Vendor Packet</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Commercial Trade Lines Management Table -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-white">💳 Commercial Credit & Net-30 Vendor Accounts</h2>
+          <p class="text-xs text-slate-400">Trade lines reporting monthly to D&B, Experian Commercial & Equifax Business</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-300">
+          <thead class="bg-slate-950 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+            <tr>
+              <th class="px-4 py-3">Vendor / Account</th>
+              <th class="px-4 py-3">Category</th>
+              <th class="px-4 py-3">Credit Limit</th>
+              <th class="px-4 py-3">Reporting Bureaus</th>
+              <th class="px-4 py-3">Current Status</th>
+            </tr>
+          </thead>
+          <tbody id="tradeTableBody" class="divide-y divide-slate-800">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Script for live Sentinel data fetching -->
+  <script>
+    async function loadSentinelData() {
+      try {
+        const res = await fetch('/api/v1/standing/latest');
+        const data = await res.json();
+        if (data.success && data.data) {
+          renderDashboard(data.data.evaluation);
+        } else {
+          runAudit();
+        }
+      } catch (err) {
+        runAudit();
+      }
+    }
+
+    async function runAudit() {
+      document.getElementById('runAuditBtn').disabled = true;
+      document.getElementById('runAuditBtn').innerText = '⏳ Auditing...';
+      try {
+        const res = await fetch('/api/v1/standing/audit', { method: 'POST' });
+        const data = await res.json();
+        if (data.success && data.data) {
+          renderDashboard(data.data.evaluation);
+        }
+      } catch (err) {
+        console.error('Audit failed:', err);
+      } finally {
+        document.getElementById('runAuditBtn').disabled = false;
+        document.getElementById('runAuditBtn').innerText = '⚡ Run Live Audit';
+      }
+    }
+
+    function renderDashboard(evaluation) {
+      document.getElementById('scoreValue').innerText = evaluation.overallScore;
+      document.getElementById('scoreBar').style.width = evaluation.overallScore + '%';
+      document.getElementById('ratingBadge').innerText = evaluation.standingRating.replace('_', ' ');
+
+      // Pillars
+      const pillarsEl = document.getElementById('pillarsContainer');
+      pillarsEl.innerHTML = '';
+      Object.values(evaluation.categories).forEach(cat => {
+        const pct = Math.round((cat.score / cat.maxScore) * 100);
+        const card = document.createElement('div');
+        card.className = 'bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 space-y-2';
+        card.innerHTML = `
+          <div class="flex justify-between items-center text-sm font-semibold">
+            <span class="text-slate-200">${cat.name}</span>
+            <span class="text-indigo-400">${cat.score} / ${cat.maxScore} pts (${pct}%)</span>
+          </div>
+          <div class="w-full bg-slate-800 rounded-full h-1.5">
+            <div class="bg-indigo-500 h-1.5 rounded-full" style="width: ${pct}%"></div>
+          </div>
+          <div class="text-xs text-slate-400 mt-2 space-y-1">
+            ${cat.items.map(item => `
+              <div class="flex justify-between items-center">
+                <span>• ${item.label}</span>
+                <span class="font-mono text-emerald-400 text-[10px]">${item.status}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        pillarsEl.appendChild(card);
+      });
+
+      // Actions
+      const actionEl = document.getElementById('actionList');
+      actionEl.innerHTML = '';
+      evaluation.actionItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'p-3 rounded-lg bg-slate-950 border border-slate-800 text-xs space-y-1';
+        div.innerHTML = `
+          <div class="flex items-center space-x-2">
+            <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${item.priority === 'HIGH' ? 'bg-red-950 text-red-400 border border-red-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">${item.priority}</span>
+            <span class="font-medium text-slate-200">${item.task}</span>
+          </div>
+          <p class="text-[11px] text-slate-500">Portal: <span class="text-slate-400">${item.portal}</span></p>
+        `;
+        actionEl.appendChild(div);
+      });
+
+      // Trade Lines table
+      const tbody = document.getElementById('tradeTableBody');
+      tbody.innerHTML = '';
+      const sampleTrades = [
+        { name: 'Uline', cat: 'Packaging & Warehouse', limit: '$1,000', bureaus: 'D&B, Experian', status: 'Active Trade' },
+        { name: 'Grainger', cat: 'Industrial Supplies', limit: '$1,500', bureaus: 'D&B', status: 'Active Trade' },
+        { name: 'Quill / Staples Advantage', cat: 'Office Supplies', limit: '$1,000', bureaus: 'D&B, Experian', status: 'Active Trade' },
+        { name: 'Crown Office Supplies', cat: 'Stationery', limit: '$500', bureaus: 'Equifax, Experian', status: 'In Review' },
+        { name: 'The CEO Creative', cat: 'Design & Marketing', limit: '$1,100', bureaus: 'CreditSafe, Equifax', status: 'In Review' }
+      ];
+      sampleTrades.forEach(t => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-slate-800/40 transition';
+        row.innerHTML = `
+          <td class="px-4 py-3 font-semibold text-white">${t.name}</td>
+          <td class="px-4 py-3 text-slate-400">${t.cat}</td>
+          <td class="px-4 py-3 font-mono text-indigo-300">${t.limit}</td>
+          <td class="px-4 py-3 text-slate-400">${t.bureaus}</td>
+          <td class="px-4 py-3"><span class="px-2 py-0.5 rounded-full text-xs ${t.status === 'Active Trade' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">${t.status}</span></td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    document.getElementById('runAuditBtn').addEventListener('click', runAudit);
+    document.getElementById('downloadVendorPacketBtn').addEventListener('click', async () => {
+      const res = await fetch('/api/v1/standing/generate-vendor-packet', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        const blob = new Blob([data.data.markdown], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = data.data.fileName;
+        a.click();
+      }
+    });
+
+    loadSentinelData();
+  </script>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-950 py-8 text-center text-xs text-slate-500 space-y-2 mt-8">
+    <div class="flex justify-center space-x-6 mb-2 text-slate-400">
+      <a href="/" class="hover:text-white">Home</a>
+      <a href="/trust" class="hover:text-white">Trust Center</a>
+      <a href="/security" class="hover:text-white">Security Architecture</a>
+      <a href="/privacy" class="hover:text-white">Privacy Policy</a>
+      <a href="/terms" class="hover:text-white">Terms &amp; SLA</a>
+      <a href="mailto:admin@amicus-technology.net" class="hover:text-white">Contact</a>
+    </div>
+    <p>&copy; 2026 Amicus Technology Services Inc. All Rights Reserved.</p>
+    <p class="text-[11px]">5900 Balcones Drive, STE 100, Austin, TX 78731 &bull; Red Oak, TX &bull; Tel: <a href="tel:+12142336185" class="text-indigo-400">+1 (214) 233-6185</a></p>
+  </footer>
+
+</body>
+</html>

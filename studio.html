@@ -1,0 +1,1853 @@
+<!-- Copyright (c) 2026 Amicus Technology Services Inc. All Rights Reserved. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amicus Web Studio™ | Tactical WebDaaS Suite</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #070a11;
+      --bg-panel: #0d131f;
+      --bg-card: #121a2b;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(56, 189, 248, 0.25);
+      --cyan-glow: #06b6d4;
+      --laser-blue: #3b82f6;
+    }
+    body {
+      background-color: var(--bg-main);
+      color: #cbd5e1;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+    /* Subtle Tactical Grid Background */
+    .tactical-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+    /* Diegetic Status Spine */
+    .telemetry-spine {
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    /* Viewport preview transitions */
+    #previewWrapper {
+      transition: max-width 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    /* Command Palette Item Highlight */
+    .palette-item.active {
+      background-color: rgba(6, 182, 212, 0.15);
+      border-color: rgba(6, 182, 212, 0.4);
+      color: #fff;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col tactical-grid selection:bg-blue-500/30 selection:text-white">
+
+  <!-- TOP TELEMETRY HUD HEADER (Raycast & Tactical Sci-Fi Inspired) -->
+  <header class="border-b border-gray-800/80 bg-gray-950/90 backdrop-blur-md px-5 py-2.5 flex items-center justify-between telemetry-spine z-30">
+    <!-- Brand / System Node -->
+    <div class="flex items-center gap-3">
+      <div class="w-2.5 h-2.5 rounded-sm bg-blue-500 rotate-45 shadow-[0_0_8px_#3b82f6]"></div>
+      <div class="flex items-baseline gap-2">
+        <span class="text-base font-bold text-white tracking-tight">Amicus Web Studio™</span>
+        <span class="text-[11px] font-mono font-medium text-cyan-400 bg-cyan-950/60 border border-cyan-800/50 px-2 py-0.5 rounded">
+          DECK // v0.1.0
+        </span>
+      </div>
+    </div>
+
+    <!-- Center Dev Telemetry Bar (Diegetic Metrics + Raycast Command Trigger) -->
+    <div class="hidden md:flex items-center gap-4 text-xs font-mono text-gray-400">
+      <!-- Raycast-style Quick Palette Button -->
+      <button onclick="openPalette()" class="flex items-center gap-2 px-3 py-1 rounded-lg bg-gray-900 border border-gray-800 hover:border-cyan-500/50 text-gray-300 hover:text-white transition group" title="Open Command Palette (Ctrl+K or Cmd+K)">
+        <span class="text-cyan-400">⌘</span>
+        <span>Quick Action</span>
+        <span class="text-[10px] text-gray-500 bg-gray-950 px-1.5 py-0.5 rounded border border-gray-800 group-hover:border-cyan-500/40">Ctrl+K</span>
+      </button>
+
+      <div class="text-gray-700">|</div>
+
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="text-gray-300">CORE: <span class="text-emerald-400">ONLINE</span></span>
+      </div>
+
+      <div class="text-gray-700">|</div>
+      <div>PING: <span id="pingBadge" class="text-cyan-400">14ms</span></div>
+
+      <div class="text-gray-700">|</div>
+      <button onclick="toggleSfx()" id="sfxBtn" class="flex items-center gap-1 px-2 py-0.5 rounded bg-gray-900 border border-gray-800 hover:border-gray-700 text-gray-400 hover:text-white transition" title="Toggle tactile synthesized audio clicks">
+        <span id="sfxIcon">🔇</span> <span id="sfxLabel">SFX: OFF</span>
+      </button>
+
+      <div class="text-gray-700">|</div>
+      <button onclick="openShortcutsModal()" class="flex items-center gap-1 text-gray-400 hover:text-white transition" title="View Keyboard Shortcuts (?)">
+        <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-[10px]">?</span>
+      </button>
+    </div>
+
+    <!-- Right Controls: Viewport Sortie, Layout & Inspector -->
+    <div class="flex items-center gap-2">
+      <!-- In-Situ Tactical Inspector Toggle (Figma Dev Mode / Diegetic HUD) -->
+      <button onclick="toggleInspector()" id="inspectorBtn" class="flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono rounded bg-gray-900 border border-gray-800 hover:border-cyan-500/50 text-gray-300 hover:text-cyan-300 transition" title="Inspect DOM elements directly inside canvas (Alt+I)">
+        <span class="text-cyan-400 font-bold">🎯</span>
+        <span class="hidden sm:inline">Tactical Inspector</span>
+        <span id="inspectorStatus" class="text-[10px] text-gray-500">[OFF]</span>
+      </button>
+
+      <!-- Design Theme Switcher -->
+      <div class="hidden sm:flex items-center gap-1.5 bg-gray-900 border border-gray-800 rounded px-2 py-1 text-xs font-mono">
+        <span class="text-cyan-400">🎨</span>
+        <select id="themeSelect" onchange="changeTheme(this.value)" class="bg-transparent text-gray-200 focus:outline-none cursor-pointer text-xs" title="Switch Design Theme / Palette">
+          <option value="obsidian" selected>Obsidian Cyber</option>
+          <option value="emerald">Emerald Quantum</option>
+          <option value="violet">Violet Nebula</option>
+          <option value="sunset">Sunset Crimson</option>
+          <option value="arctic">Arctic Light</option>
+        </select>
+      </div>
+
+      <!-- Viewport Device Switcher -->
+      <div class="flex items-center bg-gray-900 border border-gray-800 rounded p-0.5 text-xs font-mono">
+        <button onclick="setViewport('desktop')" id="vp-desktop" class="px-2 py-1 rounded bg-blue-600 text-white font-medium transition" title="Desktop 100% (Alt+1)">
+          💻 100%
+        </button>
+        <button onclick="setViewport('tablet')" id="vp-tablet" class="px-2 py-1 rounded text-gray-400 hover:text-white transition" title="Tablet 768px (Alt+2)">
+          📱 768
+        </button>
+        <button onclick="setViewport('mobile')" id="vp-mobile" class="px-2 py-1 rounded text-gray-400 hover:text-white transition" title="Mobile 375px (Alt+3)">
+          📲 375
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUBHEADER: TACTICAL MODE TABS + WARP LAYOUT SWITCHER -->
+  <div class="border-b border-gray-800/80 bg-gray-950/60 px-5 flex items-center justify-between text-xs font-mono">
+    <div class="flex gap-2 py-1.5">
+      <button onclick="switchTab('component')" id="tabBtn-component" class="px-3 py-1.5 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 font-medium transition flex items-center gap-1.5">
+        <span>🎨</span> Component Synthesizer
+      </button>
+      <button onclick="switchTab('api')" id="tabBtn-api" class="px-3 py-1.5 rounded text-gray-400 hover:text-gray-200 border border-transparent transition flex items-center gap-1.5">
+        <span>⚙️</span> REST API Scaffolder
+      </button>
+      <button onclick="switchTab('patcher')" id="tabBtn-patcher" class="px-3 py-1.5 rounded text-gray-400 hover:text-gray-200 border border-transparent transition flex items-center gap-1.5">
+        <span>🩹</span> Surgical Code Patcher
+      </button>
+      <button onclick="switchTab('nocturnal')" id="tabBtn-nocturnal" class="px-3 py-1.5 rounded text-gray-400 hover:text-gray-200 border border-transparent transition flex items-center gap-1.5">
+        <span>🌙</span> Nocturnal Intelligence
+      </button>
+      <a href="/browser" id="tabBtn-browser" class="px-3 py-1.5 rounded bg-cyan-950/70 hover:bg-cyan-900/90 text-cyan-300 border border-cyan-600/60 font-medium transition flex items-center gap-1.5 shadow-md shadow-cyan-950/40" title="Launch Side-by-Side Agent Chat & Live Controlled Browser">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+        <span>🤖</span> Live Agent Browser Deck ↗
+      </a>
+    </div>
+
+    <!-- Warp-inspired Split / Single Viewport Toggle -->
+    <div class="flex items-center gap-2">
+      <span class="text-[11px] text-gray-500 hidden sm:inline">VIEW:</span>
+      <div class="flex items-center bg-gray-900/80 border border-gray-800 rounded p-0.5 text-[11px]">
+        <button onclick="setLayout('split')" id="layout-split" class="px-2 py-0.5 rounded bg-gray-800 text-cyan-300 font-semibold transition" title="Split Code & Preview">
+          ◫ Split
+        </button>
+        <button onclick="setLayout('canvas')" id="layout-canvas" class="px-2 py-0.5 rounded text-gray-400 hover:text-white transition" title="Canvas Only">
+          🖥 Canvas
+        </button>
+        <button onclick="setLayout('code')" id="layout-code" class="px-2 py-0.5 rounded text-gray-400 hover:text-white transition" title="Code Only">
+          { } Code
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+
+    <!-- LEFT RAIL: Tactical Control Deck -->
+    <div id="leftRail" class="w-full lg:w-96 border-r border-gray-800/80 bg-[#0a0f1a]/70 p-5 flex flex-col gap-5 overflow-y-auto">
+      
+      <!-- COMPONENT SYNTHESIZER VIEW -->
+      <div id="view-component" class="flex flex-col gap-4">
+        <!-- ACTIVE ELEMENT CONTEXT TARGET PILL (When element is selected in canvas/hierarchy) -->
+        <div id="selectedElementBanner" class="hidden p-2.5 rounded-lg bg-cyan-950/90 border border-cyan-500/60 flex flex-col gap-1 text-xs font-mono shadow-lg shadow-cyan-950/50">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5 truncate">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span class="text-cyan-400 font-bold uppercase text-[10px]">AI CONTEXT TARGET:</span>
+              <span id="bannerTag" class="px-1.5 py-0.5 rounded bg-cyan-900 text-white font-bold text-[10px]">&lt;img&gt;</span>
+              <span id="bannerId" class="text-cyan-300 text-[10px]">#el-3</span>
+            </div>
+            <button onclick="clearSelectedElement()" class="text-gray-400 hover:text-white text-xs px-1" title="Deselect element">✕</button>
+          </div>
+          <div id="bannerClasses" class="text-[10px] text-gray-400 truncate">.w-full .max-w-lg</div>
+          <div class="text-[10px] text-cyan-200/90 italic">Prompt execution will modify ONLY this element!</div>
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-1.5">
+            <label class="text-xs font-mono uppercase tracking-wider text-gray-300 font-semibold flex items-center gap-1.5">
+              <span>PROMPT INSTRUCTION</span>
+            </label>
+            <span class="text-[10px] font-mono text-gray-500">[Ctrl + Enter to Execute]</span>
+          </div>
+          <textarea id="promptInput" rows="3" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-3 text-xs font-mono text-gray-100 placeholder-gray-600 focus:outline-none focus:border-cyan-500/80 transition resize-none leading-relaxed" placeholder="e.g. Build a developer telemetry dashboard with real-time gauges..."></textarea>
+          
+          <!-- Quick Refinement Action Chips -->
+          <div class="flex flex-wrap gap-1.5 pt-1.5">
+            <button type="button" onclick="appendPromptChip('✨ Polish with sleek glassmorphism and subtle border glows')" class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 hover:border-cyan-500/50 text-[10px] font-mono text-gray-300 hover:text-cyan-300 transition flex items-center gap-1 active:scale-95" title="Append glassmorphism polish to prompt">
+              <span>✨</span> Glassmorphism
+            </button>
+            <button type="button" onclick="appendPromptChip('📱 Optimize responsive mobile layouts and spacing')" class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 hover:border-cyan-500/50 text-[10px] font-mono text-gray-300 hover:text-cyan-300 transition flex items-center gap-1 active:scale-95" title="Append mobile optimization to prompt">
+              <span>📱</span> Mobile Spacing
+            </button>
+            <button type="button" onclick="appendPromptChip('📈 Add real-time telemetry counters and sparkline charts')" class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 hover:border-cyan-500/50 text-[10px] font-mono text-gray-300 hover:text-cyan-300 transition flex items-center gap-1 active:scale-95" title="Append telemetry gauges to prompt">
+              <span>📈</span> Telemetry Gauges
+            </button>
+            <button type="button" onclick="appendPromptChip('🛡️ Add input validation badges and fortified auth state')" class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 hover:border-cyan-500/50 text-[10px] font-mono text-gray-300 hover:text-cyan-300 transition flex items-center gap-1 active:scale-95" title="Append validation feedback to prompt">
+              <span>🛡️</span> Form Validation
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs font-mono text-gray-400">
+          <span>ENGINE:</span>
+          <select id="engineMode" class="bg-gray-900 border border-gray-800 rounded px-2.5 py-1 text-gray-200 text-xs focus:outline-none focus:border-blue-500 font-mono">
+            <option value="deterministic">WebDaaS Fast Deterministic</option>
+            <option value="gemini">Gemini AI Engine</option>
+            <option value="openai">OpenAI Engine</option>
+            <option value="anthropic">Claude Engine</option>
+          </select>
+        </div>
+
+        <button onclick="synthesize()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-mono font-semibold py-2.5 px-4 rounded-lg text-xs transition shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 border border-blue-400/30">
+          <span>⚡ EXECUTE SYNTHESIS</span>
+          <span class="text-[10px] text-blue-200 opacity-80">(Ctrl+Enter)</span>
+        </button>
+
+        <!-- TACTICAL DEMO LOADOUT MODULES (One-Click Demos) -->
+        <div class="pt-2 border-t border-gray-800/80">
+          <div class="flex justify-between items-center mb-2.5">
+            <span class="text-xs font-mono uppercase tracking-wider text-gray-400 font-semibold">PRESET DEMO LOADOUTS</span>
+            <span class="text-[10px] font-mono text-cyan-400">HOTKEYS [1-4]</span>
+          </div>
+          <div class="grid grid-cols-1 gap-2">
+            <button onclick="loadDemo(1)" class="group text-left text-xs font-mono bg-gray-950/80 hover:bg-gray-900/90 p-2.5 rounded-lg border border-gray-800 hover:border-cyan-500/50 transition flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-blue-400">🚀</span>
+                <span class="text-gray-300 group-hover:text-white font-medium">Conversion Hero Banner</span>
+              </div>
+              <span class="text-[10px] text-gray-500 font-mono bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800">Alt+1</span>
+            </button>
+
+            <button onclick="loadDemo(2)" class="group text-left text-xs font-mono bg-gray-950/80 hover:bg-gray-900/90 p-2.5 rounded-lg border border-gray-800 hover:border-cyan-500/50 transition flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-cyan-400">📊</span>
+                <span class="text-gray-300 group-hover:text-white font-medium">Developer Telemetry Deck</span>
+              </div>
+              <span class="text-[10px] text-cyan-400 font-mono bg-cyan-950/60 px-1.5 py-0.5 rounded border border-cyan-800/50">Alt+2</span>
+            </button>
+
+            <button onclick="loadDemo(3)" class="group text-left text-xs font-mono bg-gray-950/80 hover:bg-gray-900/90 p-2.5 rounded-lg border border-gray-800 hover:border-cyan-500/50 transition flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-amber-400">💳</span>
+                <span class="text-gray-300 group-hover:text-white font-medium">Enterprise Pricing Matrix</span>
+              </div>
+              <span class="text-[10px] text-gray-500 font-mono bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800">Alt+3</span>
+            </button>
+
+            <button onclick="loadDemo(4)" class="group text-left text-xs font-mono bg-gray-950/80 hover:bg-gray-900/90 p-2.5 rounded-lg border border-gray-800 hover:border-cyan-500/50 transition flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-emerald-400">🛡️</span>
+                <span class="text-gray-300 group-hover:text-white font-medium">Fortified Auth & Key Gate</span>
+              </div>
+              <span class="text-[10px] text-gray-500 font-mono bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800">Alt+4</span>
+            </button>
+
+            <button onclick="loadDemo(5)" class="group text-left text-xs font-mono bg-gray-950/80 hover:bg-gray-900/90 p-2.5 rounded-lg border border-gray-800 hover:border-cyan-500/50 transition flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="text-cyan-400">⚡</span>
+                <span class="text-gray-300 group-hover:text-white font-medium">Express Checkout (Link, Wallets)</span>
+              </div>
+              <span class="text-[10px] text-gray-500 font-mono bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800">Alt+5</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- SELECTABLE SITE ITEMS / HIERARCHY TREE -->
+        <div class="pt-2 border-t border-gray-800/80">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-mono uppercase tracking-wider text-gray-300 font-semibold flex items-center gap-1.5">
+              <span>🌳</span> SELECTABLE SITE ITEMS (<span id="elementCountBadge" class="text-cyan-400">0</span>)
+            </span>
+            <button onclick="refreshElementTree()" class="text-[10px] text-gray-400 hover:text-cyan-300 font-mono transition">⟳ Re-index</button>
+          </div>
+          <div id="elementTreeList" class="max-h-44 overflow-y-auto space-y-1 bg-gray-950/80 p-2 rounded-lg border border-gray-800 text-[11px] font-mono text-gray-300">
+            <div class="text-gray-500 text-center py-2 text-[10px]">Click any element in canvas or load a demo to index items.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- API SCAFFOLDER VIEW -->
+      <div id="view-api" class="hidden flex flex-col gap-4">
+        <div>
+          <label class="block text-xs font-mono uppercase tracking-wider text-gray-300 font-semibold mb-1.5">RESOURCE IDENTIFIER</label>
+          <input id="resourceInput" type="text" value="user" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2.5 text-xs font-mono text-gray-100 focus:outline-none focus:border-cyan-500 transition" placeholder="e.g. member, server, order">
+        </div>
+        <p class="text-xs text-gray-400 font-mono">Generates fortified Express router with validation, rate-limiting, and sanitized payloads.</p>
+        <button onclick="scaffoldApi()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-mono font-semibold py-2.5 px-4 rounded-lg text-xs transition shadow-lg shadow-indigo-500/20 border border-indigo-400/30">
+          ⚙️ SCAFFOLD REST CONTROLLER
+        </button>
+      </div>
+
+      <!-- SURGICAL PATCHER VIEW -->
+      <div id="view-patcher" class="hidden flex flex-col gap-4">
+        <div>
+          <label class="block text-xs font-mono uppercase tracking-wider text-gray-300 font-semibold mb-1">TARGET CHUNK (EXACT MATCH)</label>
+          <textarea id="targetChunkInput" rows="2" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2 text-xs font-mono text-red-300 resize-none" placeholder="Exact code chunk to replace..."></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-mono uppercase tracking-wider text-gray-300 font-semibold mb-1">REPLACEMENT CHUNK</label>
+          <textarea id="replacementChunkInput" rows="2" class="w-full bg-gray-950 border border-gray-800 rounded-lg p-2 text-xs font-mono text-green-300 resize-none" placeholder="New string to splice in..."></textarea>
+        </div>
+        <button onclick="applyCodePatch()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-semibold py-2.5 px-4 rounded-lg text-xs transition shadow-lg shadow-emerald-500/20 border border-emerald-400/30">
+          🩹 EXECUTE SURGICAL PATCH
+        </button>
+      </div>
+
+      <!-- NOCTURNAL INTELLIGENCE VIEW -->
+      <div id="view-nocturnal" class="hidden flex flex-col gap-3 font-mono text-xs">
+        <div class="p-2.5 rounded-lg bg-cyan-950/40 border border-cyan-800/50 text-[11px] text-cyan-300">
+          <span class="font-bold text-white">AUTONOMOUS RADAR:</span> Nightly scan for zero-touch services, EOL tracking, & maintenance windows.
+          <div class="mt-1 text-[10px] text-gray-400 italic">"We pay more for automation and speed."</div>
+        </div>
+
+        <div class="flex items-center justify-between bg-gray-950 p-2 rounded-lg border border-gray-800">
+          <span class="text-gray-400 text-[11px]">NIGHTLY SCHEDULE:</span>
+          <span class="text-emerald-400 font-bold">02:00 AM (AUTO)</span>
+        </div>
+
+        <button onclick="triggerNocturnalRun()" id="nocturnalRunBtn" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-mono font-semibold py-2.5 px-4 rounded-lg text-xs transition shadow-lg shadow-cyan-500/20 border border-cyan-400/30 flex items-center justify-center gap-2">
+          <span>🌙</span> TRIGGER NOCTURNAL CYCLE
+        </button>
+
+        <button onclick="loadLatestNocturnalReport()" class="w-full bg-gray-900 hover:bg-gray-800 text-gray-300 font-mono py-2 px-3 rounded-lg text-xs transition border border-gray-700 flex items-center justify-center gap-1.5">
+          <span>📄</span> LOAD LATEST BRIEFING
+        </button>
+
+        <!-- Live Nocturnal Stats Pill -->
+        <div id="nocturnalStatsPill" class="mt-1 p-2.5 bg-gray-950 rounded-lg border border-gray-800 text-[11px] flex flex-col gap-1.5">
+          <div class="flex justify-between">
+            <span class="text-gray-500">CANDIDATES SCANNED:</span>
+            <span id="nocturnalCandidatesCount" class="text-cyan-400 font-bold">--</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">ZERO-TOUCH ADOPTIONS:</span>
+            <span id="nocturnalAdoptionCount" class="text-emerald-400 font-bold">--</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">MAINTENANCE ALERTS:</span>
+            <span id="nocturnalAlertsCount" class="text-amber-400 font-bold">--</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIEGETIC QUALITY & VERIFICATION SCORECARD -->
+      <div id="auditCard" class="mt-auto p-3.5 rounded-xl bg-gray-950/90 border border-gray-800 font-mono text-xs">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] text-gray-400 uppercase font-semibold">VERIFICATION TELEMETRY</span>
+          <span id="auditGrade" class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">GRADE A (100)</span>
+        </div>
+        <div class="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden mb-2">
+          <div id="auditBar" class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full w-full transition-all duration-300"></div>
+        </div>
+        <div class="flex justify-between items-center text-[10px] text-gray-500">
+          <span id="auditA11y">A11Y: PASS</span>
+          <span id="auditResponsive">VIEWPORTS: OK</span>
+          <span id="auditSecurity">ICE GUARD: ACTIVE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CENTER-RIGHT SPLIT: CODE ENGINE + LIVE CANVAS -->
+    <div id="workspaceArea" class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+      
+      <!-- CODE INSPECTOR (VS-Code / Monaco Style with Warp Block Pill) -->
+      <div id="codePanel" class="w-full lg:w-1/2 border-r border-gray-800/80 flex flex-col bg-gray-950 transition-all">
+        <!-- Warp-style Execution Block Header -->
+        <div class="px-4 py-2 border-b border-gray-800/80 bg-gray-900/70 flex justify-between items-center text-xs font-mono text-gray-400">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span id="blockId" class="text-gray-400 text-[11px]">BLOCK #01</span>
+            <span class="text-gray-600">•</span>
+            <span id="codeTitle" class="text-gray-200">Source Output</span>
+            <span id="lineCount" class="text-[10px] text-gray-500">(0 lines)</span>
+          </div>
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <button onclick="downloadCode()" class="hover:text-cyan-300 transition px-2 py-0.5 rounded bg-gray-800/80 hover:bg-gray-800 text-[11px] text-gray-300 border border-gray-700/60 flex items-center gap-1" title="Download standalone .html file">
+              <span>💾</span> Export HTML
+            </button>
+            <button onclick="copyAsJsx()" class="hover:text-cyan-300 transition px-2 py-0.5 rounded bg-gray-800/80 hover:bg-gray-800 text-[11px] text-gray-300 border border-gray-700/60 flex items-center gap-1" title="Convert and copy as React/Next.js JSX Component">
+              <span>⚛️</span> Copy JSX
+            </button>
+            <button onclick="openInCodePen()" class="hover:text-cyan-300 transition px-2 py-0.5 rounded bg-gray-800/80 hover:bg-gray-800 text-[11px] text-gray-300 border border-gray-700/60 flex items-center gap-1" title="Open and test live in CodePen sandbox">
+              <span>🚀</span> CodePen
+            </button>
+            <button onclick="copyCode()" class="hover:text-cyan-300 transition px-2 py-0.5 rounded bg-blue-600/30 hover:bg-blue-600 text-[11px] text-blue-300 hover:text-white border border-blue-500/40 font-medium" title="Copy raw code to clipboard (Alt+C)">
+              Copy [Alt+C]
+            </button>
+          </div>
+        </div>
+        <pre id="codeView" class="p-4 flex-1 text-xs font-mono overflow-auto text-blue-300/90 leading-relaxed whitespace-pre-wrap select-all">// Select a demo loadout on the left or press Alt+1..4 to initialize...</pre>
+      </div>
+
+      <!-- SANDBOXED PREVIEW CANVAS (Figma Dev Mode & Game HUD) -->
+      <div id="canvasPanel" class="w-full lg:w-1/2 flex flex-col bg-[#05080f] transition-all relative">
+        <!-- Preview Canvas Top Bar -->
+        <div class="px-4 py-2 border-b border-gray-800/80 bg-gray-900/70 flex justify-between items-center text-xs font-mono text-gray-400">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-gray-200">LIVE RENDER VIEWPORT</span>
+            <span id="viewportLabel" class="text-[10px] text-gray-500">[Desktop 100%]</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="inspectorOverlayIndicator" class="hidden text-xs text-cyan-400 font-semibold flex items-center gap-1">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+              TARGETING ACTIVE
+            </span>
+            <button onclick="reloadPreview()" class="hover:text-white transition" title="Reload Canvas">
+              ⟳ Refresh
+            </button>
+          </div>
+        </div>
+
+        <!-- FIGMA DEV MODE & IN-SITU CONTEXTUAL AI DOCK -->
+        <div id="devModeDock" class="hidden px-4 py-2.5 border-b border-cyan-800/60 bg-cyan-950/85 backdrop-blur-md flex flex-col gap-2 text-xs font-mono z-20 shadow-xl shadow-black/50">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="px-2 py-0.5 rounded bg-cyan-900/90 text-cyan-300 border border-cyan-700/60 font-semibold" id="nodeTag">&lt;div&gt;</span>
+              <span class="text-cyan-400 font-bold" id="nodeIdBadge">#el-1</span>
+              <span class="text-gray-400 text-[11px]" id="nodeDimensions">240 × 64px</span>
+              <span class="text-gray-600">|</span>
+              <span class="text-gray-300 text-[11px] truncate max-w-xs" id="nodeClasses">.rounded-xl .bg-gray-900</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button onclick="copySelectedClasses()" class="px-2 py-0.5 rounded bg-gray-900/80 hover:bg-gray-800 text-gray-300 hover:text-white transition text-[11px] border border-gray-700/60">
+                Copy Classes
+              </button>
+              <button onclick="copySelectedHtml()" class="px-2 py-0.5 rounded bg-gray-900/80 hover:bg-gray-800 text-gray-300 hover:text-white transition text-[11px] border border-gray-700/60">
+                Copy HTML
+              </button>
+              <button onclick="closeDevModeDock()" class="text-gray-400 hover:text-white text-sm leading-none ml-1" title="Deselect">✕</button>
+            </div>
+          </div>
+
+          <!-- In-Situ Contextual AI Prompt Input -->
+          <div class="flex items-center gap-2 bg-gray-950/90 p-1.5 rounded-lg border border-cyan-700/60 focus-within:border-cyan-400 transition">
+            <span class="text-cyan-400 text-sm ml-1">✨</span>
+            <input id="dockPromptInput" type="text" class="flex-1 bg-transparent text-xs text-white placeholder-gray-500 font-mono focus:outline-none" placeholder="Tell AI what to do with this element (e.g. 'make 10% smaller and center it')..." onkeydown="if(event.key === 'Enter') executeContextualTransform('dock')">
+            <button onclick="executeContextualTransform('dock')" id="dockApplyBtn" class="bg-cyan-600 hover:bg-cyan-500 text-white font-mono px-3 py-1 rounded text-xs font-semibold flex items-center gap-1 transition shadow-md shadow-cyan-600/30 whitespace-nowrap">
+              <span>⚡ Modify Element</span>
+            </button>
+          </div>
+
+          <!-- High-Speed 1-Click Action Chips -->
+          <div class="flex items-center gap-1.5 flex-wrap text-[10px]">
+            <span class="text-gray-500 uppercase font-semibold">Quick Actions:</span>
+            <button onclick="runQuickAction('make 10% smaller and center it')" class="px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-600 text-cyan-300 hover:bg-cyan-900 transition font-medium" title="Scale down 10% and apply block mx-auto">
+              📐 -10% & Center
+            </button>
+            <button onclick="runQuickAction('center it')" class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 text-gray-300 hover:text-white hover:border-gray-700 transition">
+              ↔ Center
+            </button>
+            <button onclick="runQuickAction('make 10% smaller')" class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 text-gray-300 hover:text-white hover:border-gray-700 transition">
+              🔍 -10% Scale
+            </button>
+            <button onclick="runQuickAction('make 10% larger')" class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 text-gray-300 hover:text-white hover:border-gray-700 transition">
+              🔍 +10% Scale
+            </button>
+            <button onclick="runQuickAction('add cyan glow shadow and border')" class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 text-gray-300 hover:text-white hover:border-gray-700 transition">
+              ✨ Cyan Glow
+            </button>
+            <button onclick="runQuickAction('rounded full circle')" class="px-2 py-0.5 rounded bg-gray-900 border border-gray-800 text-gray-300 hover:text-white hover:border-gray-700 transition">
+              ⭕ Round Full
+            </button>
+          </div>
+        </div>
+
+        <!-- Frame Centering Wrapper for Responsive Simulation -->
+        <div id="canvasViewportContainer" class="flex-1 p-4 flex items-center justify-center overflow-auto bg-black/40 relative">
+          <div id="previewWrapper" class="w-full h-full min-h-[460px] border border-gray-800/80 rounded-xl overflow-hidden shadow-2xl bg-[#090d16] relative flex">
+            <iframe id="previewFrame" class="w-full h-full min-h-[460px] border-0 flex-1" sandbox="allow-scripts allow-same-origin"></iframe>
+            
+            <!-- Draggable Canvas Resize Handle -->
+            <div id="canvasResizeHandle" class="w-2.5 hover:w-3.5 bg-gray-900/80 hover:bg-cyan-500/80 border-l border-gray-800 flex items-center justify-center cursor-ew-resize transition-all select-none group z-30" title="Drag to freely resize viewport width">
+              <div class="w-1 h-8 bg-gray-600 group-hover:bg-white rounded-full transition"></div>
+            </div>
+          </div>
+
+          <!-- Floating Live Dimension Tooltip -->
+          <div id="canvasDimensionPill" class="hidden absolute bottom-6 right-6 bg-gray-950/90 border border-cyan-500/60 text-cyan-300 px-2.5 py-1 rounded-md text-[11px] font-mono shadow-xl z-40 pointer-events-none flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="dimensionPillText">1200 × 720px</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- RAYCAST / LINEAR COMMAND PALETTE MODAL (Ctrl+K / Cmd+K) -->
+  <div id="commandPaletteModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-start justify-center pt-20 px-4">
+    <div class="w-full max-w-xl bg-gray-950 border border-gray-800 rounded-xl shadow-2xl overflow-hidden font-mono flex flex-col">
+      <!-- Search Input -->
+      <div class="px-4 py-3.5 border-b border-gray-800 flex items-center gap-3">
+        <span class="text-cyan-400 text-base">🔍</span>
+        <input id="paletteInput" type="text" class="flex-1 bg-transparent text-sm text-white placeholder-gray-500 focus:outline-none font-mono" placeholder="Type a command or search action (e.g. hero, mobile, inspect, copy)..." oninput="filterPalette()" onkeydown="handlePaletteKeydown(event)">
+        <span class="text-[10px] text-gray-500 bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800">ESC</span>
+      </div>
+
+      <!-- Action Items List -->
+      <div id="paletteList" class="max-h-80 overflow-y-auto p-2 space-y-1">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Palette Footer -->
+      <div class="px-4 py-2 border-t border-gray-800/80 bg-gray-900/50 flex justify-between items-center text-[10px] text-gray-500">
+        <div class="flex items-center gap-3">
+          <span>↑↓ Navigate</span>
+          <span>↵ Execute</span>
+          <span>Esc Dismiss</span>
+        </div>
+        <span>Amicus Quick Palette</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LINEAR-STYLE KEYBOARD SHORTCUTS CHEAT SHEET MODAL (?) -->
+  <div id="shortcutsModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-gray-950 border border-gray-800 rounded-xl shadow-2xl overflow-hidden font-mono flex flex-col">
+      <div class="px-5 py-3.5 border-b border-gray-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-cyan-400 font-bold">⌨️</span>
+          <span class="text-sm font-semibold text-white">Keyboard Shortcuts</span>
+        </div>
+        <button onclick="closeShortcutsModal()" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+
+      <div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div>
+          <span class="text-gray-500 text-[10px] uppercase tracking-wider block mb-2 font-semibold">Execution & Core</span>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center"><span class="text-gray-300">Synthesize Code</span> <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-cyan-300">Ctrl+Enter</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-300">Command Palette</span> <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-cyan-300">Ctrl+K</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-300">Copy Code</span> <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-cyan-300">Alt+C</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-300">Tactical Inspector</span> <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-cyan-300">Alt+I</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-300">Shortcuts Sheet</span> <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-cyan-300">?</span></div>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-gray-500 text-[10px] uppercase tracking-wider block mb-2 font-semibold">Loadout Demos</span>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center"><span class="text-gray-300">SaaS Hero Banner</span> <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-cyan-300">Alt+1</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-300">Telemetry Deck</span> <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-cyan-300">Alt+2</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-300">Enterprise Pricing</span> <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-cyan-300">Alt+3</span></div>
+            <div class="flex justify-between items-center"><span class="text-gray-300">Fortified Auth Gate</span> <span class="bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800 text-cyan-300">Alt+4</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5 py-2.5 border-t border-gray-800/80 bg-gray-900/50 flex justify-end">
+        <button onclick="closeShortcutsModal()" class="px-3 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NON-BLOCKING TACTICAL TOAST NOTIFICATIONS (No annoying alert popups) -->
+  <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-12 opacity-0 transition-all duration-200 pointer-events-none font-mono text-xs px-3.5 py-2 rounded-lg bg-gray-900/95 border border-cyan-500/40 text-cyan-300 shadow-xl flex items-center gap-2">
+    <span id="toastIcon">⚡</span>
+    <span id="toastMsg">Ready</span>
+  </div>
+
+  <script>
+    let activeTab = 'component';
+    let sfxEnabled = false;
+    let inspectorActive = false;
+    let currentViewport = 'desktop';
+    let currentLayout = 'split';
+    let currentTheme = 'obsidian';
+    let audioCtx = null;
+    let blockCounter = 1;
+    let selectedNodeData = null;
+
+    const THEMES = {
+      obsidian: { id: 'obsidian', name: 'Obsidian Cyber', bg: '#090d16', text: '#f3f4f6', accent: '#06b6d4', cardBg: '#0d131f' },
+      emerald: { id: 'emerald', name: 'Emerald Quantum', bg: '#06140e', text: '#ecfdf5', accent: '#10b981', cardBg: '#0a2318' },
+      violet: { id: 'violet', name: 'Violet Nebula', bg: '#0d0b1a', text: '#f5f3ff', accent: '#8b5cf6', cardBg: '#18122f' },
+      sunset: { id: 'sunset', name: 'Sunset Crimson', bg: '#180b0e', text: '#fff1f2', accent: '#f43f5e', cardBg: '#2a1217' },
+      arctic: { id: 'arctic', name: 'Arctic Light', bg: '#f8fafc', text: '#0f172a', accent: '#2563eb', cardBg: '#ffffff' }
+    };
+
+    // Palette Commands Catalog (Raycast / Linear style)
+    const COMMANDS = [
+      { id: 'demo1', title: 'Load Demo: Conversion Hero Banner', category: 'Demos', hotkey: 'Alt+1', action: () => loadDemo(1) },
+      { id: 'demo2', title: 'Load Demo: Developer Telemetry Deck', category: 'Demos', hotkey: 'Alt+2', action: () => loadDemo(2) },
+      { id: 'demo3', title: 'Load Demo: Enterprise Pricing Matrix', category: 'Demos', hotkey: 'Alt+3', action: () => loadDemo(3) },
+      { id: 'demo4', title: 'Load Demo: Fortified Auth & 2FA Gate', category: 'Demos', hotkey: 'Alt+4', action: () => loadDemo(4) },
+      { id: 'demo5', title: 'Load Demo: Express Checkout (Link, Wallets, PayPal)', category: 'Demos', hotkey: 'Alt+5', action: () => loadDemo(5) },
+      { id: 'run', title: 'Execute Synthesis Prompt', category: 'Core', hotkey: 'Ctrl+Enter', action: () => synthesize() },
+      { id: 'copy', title: 'Copy Synthesized Code to Clipboard', category: 'Code', hotkey: 'Alt+C', action: () => copyCode() },
+      { id: 'copy_jsx', title: 'Copy as React / JSX Component', category: 'Code', hotkey: 'Alt+J', action: () => copyAsJsx() },
+      { id: 'export_html', title: 'Export Standalone HTML Bundle (.html)', category: 'Code', hotkey: '', action: () => downloadCode() },
+      { id: 'export_codepen', title: 'Open & Test in CodePen Sandbox', category: 'Code', hotkey: '', action: () => openInCodePen() },
+      { id: 'theme_obsidian', title: 'Switch Theme: Obsidian Cyber', category: 'Theme', hotkey: '', action: () => changeTheme('obsidian') },
+      { id: 'theme_emerald', title: 'Switch Theme: Emerald Quantum', category: 'Theme', hotkey: '', action: () => changeTheme('emerald') },
+      { id: 'theme_violet', title: 'Switch Theme: Violet Nebula', category: 'Theme', hotkey: '', action: () => changeTheme('violet') },
+      { id: 'theme_sunset', title: 'Switch Theme: Sunset Crimson', category: 'Theme', hotkey: '', action: () => changeTheme('sunset') },
+      { id: 'theme_arctic', title: 'Switch Theme: Arctic Light Mode', category: 'Theme', hotkey: '', action: () => changeTheme('arctic') },
+      { id: 'inspect', title: 'Toggle In-Situ Tactical Inspector', category: 'Tools', hotkey: 'Alt+I', action: () => toggleInspector() },
+      { id: 'sfx', title: 'Toggle Tactile Audio SFX', category: 'Tools', hotkey: '', action: () => toggleSfx() },
+      { id: 'vp_desk', title: 'Switch Viewport: Desktop (100%)', category: 'Viewport', hotkey: '', action: () => setViewport('desktop') },
+      { id: 'vp_tab', title: 'Switch Viewport: Tablet (768px)', category: 'Viewport', hotkey: '', action: () => setViewport('tablet') },
+      { id: 'vp_mob', title: 'Switch Viewport: Mobile (375px)', category: 'Viewport', hotkey: '', action: () => setViewport('mobile') },
+      { id: 'lay_split', title: 'Set Layout: Split View (Code & Canvas)', category: 'Layout', hotkey: '', action: () => setLayout('split') },
+      { id: 'lay_canvas', title: 'Set Layout: Canvas Only', category: 'Layout', hotkey: '', action: () => setLayout('canvas') },
+      { id: 'lay_code', title: 'Set Layout: Code Only', category: 'Layout', hotkey: '', action: () => setLayout('code') },
+      { id: 'tab_api', title: 'Switch Tool: REST API Scaffolder', category: 'Navigation', hotkey: '', action: () => switchTab('api') },
+      { id: 'tab_patch', title: 'Switch Tool: Surgical Code Patcher', category: 'Navigation', hotkey: '', action: () => switchTab('patcher') },
+      { id: 'tab_nocturnal', title: 'Switch Tool: Nocturnal Autonomous Intelligence', category: 'Navigation', hotkey: 'Alt+N', action: () => switchTab('nocturnal') },
+      { id: 'run_nocturnal', title: 'Trigger Nocturnal Provider Discovery Cycle', category: 'Autonomous', hotkey: '', action: () => triggerNocturnalRun() },
+      { id: 'el_scale_center', title: 'Targeted Action: Make Selected Element 10% Smaller & Center', category: 'Element AI', hotkey: '', action: () => runQuickAction('make 10% smaller and center it') },
+      { id: 'el_clear', title: 'Clear Selected Element Target', category: 'Element AI', hotkey: 'Esc', action: () => clearSelectedElement() },
+      { id: 'el_reindex', title: 'Re-Index Selectable Site Items', category: 'Element AI', hotkey: '', action: () => refreshElementTree() },
+      { id: 'help', title: 'Show Keyboard Shortcuts Cheat Sheet', category: 'Help', hotkey: '?', action: () => openShortcutsModal() }
+    ];
+
+    let filteredCommands = [...COMMANDS];
+    let selectedPaletteIndex = 0;
+
+    // Subtle Tactical Web Audio Synthesizer (Hardcore-Dev Friendly: Short, Muted, No Cartoon Sounds)
+    function playSfx(type = 'click') {
+      if (!sfxEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if (type === 'click') {
+          // 80ms tactile mechanical click
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(80, now + 0.04);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'success') {
+          // 120ms pleasant dual-tone chime
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(587, now);
+          osc.frequency.setValueAtTime(880, now + 0.06);
+          gain.gain.setValueAtTime(0.04, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.13);
+        }
+      } catch (e) {
+        // audio context not allowed yet
+      }
+    }
+
+    function toggleSfx() {
+      sfxEnabled = !sfxEnabled;
+      const label = document.getElementById('sfxLabel');
+      const icon = document.getElementById('sfxIcon');
+      const btn = document.getElementById('sfxBtn');
+      if (sfxEnabled) {
+        label.textContent = 'SFX: ON';
+        icon.textContent = '🔊';
+        btn.classList.add('border-cyan-500/50', 'text-cyan-400');
+        showToast('Tactile audio feedback enabled', '🔊');
+        playSfx('success');
+      } else {
+        label.textContent = 'SFX: OFF';
+        icon.textContent = '🔇';
+        btn.classList.remove('border-cyan-500/50', 'text-cyan-400');
+        showToast('Audio muted', '🔇');
+      }
+    }
+
+    function showToast(msg, icon = '✓') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMsg').textContent = msg;
+      document.getElementById('toastIcon').textContent = icon;
+      toast.classList.remove('translate-y-12', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-12', 'opacity-0');
+      }, 2200);
+    }
+
+    // Warp-inspired Layout Switcher (Split vs Canvas Only vs Code Only)
+    function setLayout(layout) {
+      currentLayout = layout;
+      playSfx('click');
+      const codePanel = document.getElementById('codePanel');
+      const canvasPanel = document.getElementById('canvasPanel');
+      
+      ['split', 'canvas', 'code'].forEach(l => {
+        const btn = document.getElementById(`layout-${l}`);
+        if (l === layout) {
+          btn.className = "px-2 py-0.5 rounded bg-gray-800 text-cyan-300 font-semibold transition";
+        } else {
+          btn.className = "px-2 py-0.5 rounded text-gray-400 hover:text-white transition";
+        }
+      });
+
+      if (layout === 'split') {
+        codePanel.classList.remove('hidden');
+        codePanel.className = "w-full lg:w-1/2 border-r border-gray-800/80 flex flex-col bg-gray-950 transition-all";
+        canvasPanel.classList.remove('hidden');
+        canvasPanel.className = "w-full lg:w-1/2 flex flex-col bg-[#05080f] transition-all relative";
+      } else if (layout === 'canvas') {
+        codePanel.classList.add('hidden');
+        canvasPanel.classList.remove('hidden');
+        canvasPanel.className = "w-full flex-1 flex flex-col bg-[#05080f] transition-all relative";
+      } else if (layout === 'code') {
+        canvasPanel.classList.add('hidden');
+        codePanel.classList.remove('hidden');
+        codePanel.className = "w-full flex-1 flex flex-col bg-gray-950 transition-all";
+      }
+    }
+
+    // Viewport Simulation Mode (Responsive Sortie)
+    function setViewport(vp) {
+      currentViewport = vp;
+      playSfx('click');
+      const wrapper = document.getElementById('previewWrapper');
+      const label = document.getElementById('viewportLabel');
+
+      ['desktop', 'tablet', 'mobile'].forEach(v => {
+        const btn = document.getElementById(`vp-${v}`);
+        if (v === vp) {
+          btn.className = "px-2 py-1 rounded bg-blue-600 text-white font-medium transition";
+        } else {
+          btn.className = "px-2 py-1 rounded text-gray-400 hover:text-white transition";
+        }
+      });
+
+      if (vp === 'desktop') {
+        wrapper.style.maxWidth = '100%';
+        label.textContent = '[Desktop 100%]';
+      } else if (vp === 'tablet') {
+        wrapper.style.maxWidth = '768px';
+        label.textContent = '[Tablet 768px]';
+      } else if (vp === 'mobile') {
+        wrapper.style.maxWidth = '375px';
+        label.textContent = '[Mobile 375px]';
+      }
+    }
+
+    // Diegetic In-Situ Inspector Mode (Figma Dev Mode Inspired)
+    function toggleInspector() {
+      inspectorActive = !inspectorActive;
+      playSfx('click');
+      const btn = document.getElementById('inspectorBtn');
+      const status = document.getElementById('inspectorStatus');
+      const indicator = document.getElementById('inspectorOverlayIndicator');
+
+      if (inspectorActive) {
+        btn.classList.add('border-cyan-500', 'bg-cyan-950/40', 'text-cyan-300');
+        status.textContent = '[ACTIVE]';
+        status.className = 'text-[10px] text-cyan-400 font-bold';
+        indicator.classList.remove('hidden');
+        showToast('Tactical In-Situ Inspector Active — Click any element in canvas', '🎯');
+      } else {
+        btn.classList.remove('border-cyan-500', 'bg-cyan-950/40', 'text-cyan-300');
+        status.textContent = '[OFF]';
+        status.className = 'text-[10px] text-gray-500';
+        indicator.classList.add('hidden');
+        closeDevModeDock();
+        showToast('Inspector deactivated', '🎯');
+      }
+
+      // Re-render preview with or without inspector script
+      const currentCode = document.getElementById('codeView').textContent;
+      if (currentCode && !currentCode.startsWith('//')) {
+        updatePreview(currentCode);
+      }
+    }
+
+    // Figma Dev Mode & Contextual Element Selection Controls
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'INSPECTOR_NODE_SELECTED') {
+        onElementSelected(event.data);
+      }
+    });
+
+    function onElementSelected(data) {
+      selectedNodeData = data;
+      playSfx('click');
+
+      // Update In-Situ Dev Mode Dock
+      const dock = document.getElementById('devModeDock');
+      document.getElementById('nodeTag').textContent = `<${data.tagName}>`;
+      document.getElementById('nodeIdBadge').textContent = data.amicusId ? `#${data.amicusId}` : '';
+      document.getElementById('nodeDimensions').textContent = `${Math.round(data.width)} × ${Math.round(data.height)}px`;
+      document.getElementById('nodeClasses').textContent = data.className ? `.${data.className.split(' ').join(' .')}` : '(no classes)';
+      
+      const dockInput = document.getElementById('dockPromptInput');
+      if (dockInput) {
+        dockInput.placeholder = `Tell AI what to do with <${data.tagName}> (e.g. 'make 10% smaller and center it')...`;
+        dockInput.value = '';
+      }
+      dock.classList.remove('hidden');
+
+      // Update Left Rail Context Target Banner
+      const banner = document.getElementById('selectedElementBanner');
+      if (banner) {
+        banner.classList.remove('hidden');
+        document.getElementById('bannerTag').textContent = `<${data.tagName}>`;
+        document.getElementById('bannerId').textContent = data.amicusId ? `#${data.amicusId}` : '';
+        document.getElementById('bannerClasses').textContent = data.className ? `.${data.className.split(' ').join(' .')}` : '';
+      }
+
+      // Highlight in Element Tree
+      highlightElementInTree(data.amicusId);
+
+      showToast(`Selected <${data.tagName}>: Ready for targeted AI change`, '🎯');
+    }
+
+    function clearSelectedElement() {
+      selectedNodeData = null;
+      document.getElementById('devModeDock').classList.add('hidden');
+      const banner = document.getElementById('selectedElementBanner');
+      if (banner) banner.classList.add('hidden');
+
+      // Clear outline in iframe
+      const frame = document.getElementById('previewFrame');
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage({ type: 'CLEAR_SELECTION' }, '*');
+      }
+      highlightElementInTree(null);
+      showToast('Cleared element targeting', '🎯');
+    }
+
+    function closeDevModeDock() {
+      clearSelectedElement();
+    }
+
+    function copySelectedClasses() {
+      if (!selectedNodeData) return;
+      navigator.clipboard.writeText(selectedNodeData.className || '');
+      playSfx('success');
+      showToast('Copied Tailwind classes', '📋');
+    }
+
+    function copySelectedHtml() {
+      if (!selectedNodeData) return;
+      navigator.clipboard.writeText(selectedNodeData.outerHTML || '');
+      playSfx('success');
+      showToast('Copied element HTML', '📋');
+    }
+
+    async function executeContextualTransform(sourceOrInstruction) {
+      if (!selectedNodeData) {
+        showToast('Please click an element in the canvas first', '⚠');
+        return;
+      }
+
+      let instruction = '';
+      if (typeof sourceOrInstruction === 'string' && sourceOrInstruction !== 'dock' && sourceOrInstruction !== 'chat') {
+        instruction = sourceOrInstruction;
+      } else if (sourceOrInstruction === 'dock') {
+        instruction = document.getElementById('dockPromptInput').value.trim();
+      } else {
+        const dockVal = document.getElementById('dockPromptInput')?.value.trim();
+        const mainVal = document.getElementById('promptInput')?.value.trim();
+        instruction = dockVal || mainVal;
+      }
+
+      if (!instruction) {
+        showToast('Please type an instruction for this element', '⚠');
+        return;
+      }
+
+      playSfx('click');
+      showToast(`Applying targeted AI change to <${selectedNodeData.tagName}>...`, '✨');
+      const currentCode = document.getElementById('codeView').textContent;
+      const mode = document.getElementById('engineMode').value;
+      const startTime = performance.now();
+
+      const btn = document.getElementById('dockApplyBtn');
+      if (btn) btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/v1/assistant/element/transform', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            sourceHtml: currentCode,
+            elementId: selectedNodeData.amicusId,
+            targetOuterHtml: selectedNodeData.outerHTML,
+            instruction,
+            modelPreference: mode
+          })
+        });
+
+        const json = await res.json();
+        const elapsed = Math.round(performance.now() - startTime);
+        document.getElementById('pingBadge').textContent = `${elapsed}ms`;
+
+        if (json.success && json.data) {
+          blockCounter++;
+          document.getElementById('blockId').textContent = `BLOCK #${String(blockCounter).padStart(2, '0')}`;
+          document.getElementById('codeView').textContent = json.data.updatedHtml;
+          updatePreview(json.data.updatedHtml);
+          updateLineCount(json.data.updatedHtml);
+          decomposeAndRenderElementTree(json.data.updatedHtml);
+
+          // Update current selection outerHTML
+          selectedNodeData.outerHTML = json.data.modifiedElement;
+
+          playSfx('success');
+          showToast(`Surgically updated <${selectedNodeData.tagName}>: "${instruction}"`, '✓');
+
+          if (document.getElementById('dockPromptInput')) {
+            document.getElementById('dockPromptInput').value = '';
+          }
+        } else {
+          showToast(json.error || 'Transformation failed', '⚠');
+        }
+      } catch (err) {
+        showToast(`Error: ${err.message}`, '❌');
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    function runQuickAction(instruction) {
+      if (document.getElementById('dockPromptInput')) {
+        document.getElementById('dockPromptInput').value = instruction;
+      }
+      executeContextualTransform(instruction);
+    }
+
+    async function decomposeAndRenderElementTree(code) {
+      if (!code || code.startsWith('//')) return;
+      try {
+        const res = await fetch('/api/v1/assistant/element/decompose', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ html: code })
+        });
+        const json = await res.json();
+        if (json.success && json.data) {
+          const { items, totalElements } = json.data;
+          const badge = document.getElementById('elementCountBadge');
+          if (badge) badge.textContent = totalElements;
+          const container = document.getElementById('elementTreeList');
+          if (!container) return;
+
+          if (items.length === 0) {
+            container.innerHTML = `<div class="text-gray-500 text-center py-2 text-[10px]">No selectable items identified.</div>`;
+            return;
+          }
+
+          container.innerHTML = items.map(item => {
+            let icon = '🔹';
+            if (item.isImage) icon = '🖼️';
+            else if (item.isButton) icon = '🔘';
+            else if (item.isHeading) icon = '🏷️';
+            else if (item.isContainer) icon = '📦';
+
+            return `
+              <div onclick="selectElementById('${item.id}')" id="tree-item-${item.id}" class="p-1.5 rounded hover:bg-gray-900 border border-transparent hover:border-gray-800 cursor-pointer flex items-center justify-between group transition">
+                <div class="flex items-center gap-1.5 truncate">
+                  <span class="text-xs">${icon}</span>
+                  <span class="text-white font-semibold text-[11px]">&lt;${item.tagName}&gt;</span>
+                  <span class="text-gray-500 text-[10px] truncate max-w-[120px]">${item.classes ? '.' + item.classes.split(' ')[0] : ''}</span>
+                </div>
+                <span class="text-[9px] text-cyan-400 font-mono bg-cyan-950/60 px-1 rounded border border-cyan-800/40">#${item.id}</span>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch (e) {
+        // non-blocking
+      }
+    }
+
+    function selectElementById(id) {
+      const frame = document.getElementById('previewFrame');
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.postMessage({ type: 'SELECT_ELEMENT_BY_ID', id }, '*');
+      }
+      highlightElementInTree(id);
+    }
+
+    function highlightElementInTree(id) {
+      document.querySelectorAll('#elementTreeList [id^="tree-item-"]').forEach(el => {
+        el.classList.remove('bg-cyan-950/80', 'border-cyan-500');
+      });
+      if (id) {
+        const target = document.getElementById(`tree-item-${id}`);
+        if (target) {
+          target.classList.add('bg-cyan-950/80', 'border-cyan-500');
+          target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+    }
+
+    function refreshElementTree() {
+      playSfx('click');
+      const code = document.getElementById('codeView').textContent;
+      decomposeAndRenderElementTree(code);
+      showToast('Re-indexed selectable site items', '🌳');
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      playSfx('click');
+      ['component', 'api', 'patcher', 'nocturnal'].forEach(t => {
+        const btn = document.getElementById(`tabBtn-${t}`);
+        const view = document.getElementById(`view-${t}`);
+        if (!btn || !view) return;
+        if (t === tab) {
+          btn.className = "px-3 py-1.5 rounded bg-blue-600/20 text-blue-400 border border-blue-500/30 font-medium transition flex items-center gap-1.5";
+          view.classList.remove('hidden');
+        } else {
+          btn.className = "px-3 py-1.5 rounded text-gray-400 hover:text-gray-200 border border-transparent transition flex items-center gap-1.5";
+          view.classList.add('hidden');
+        }
+      });
+
+      if (tab === 'nocturnal') {
+        loadLatestNocturnalReport();
+      }
+    }
+
+    async function loadLatestNocturnalReport() {
+      const codeView = document.getElementById('codeView');
+      const codeTitle = document.getElementById('codeTitle');
+      const lineCount = document.getElementById('lineCount');
+      playSfx('click');
+      try {
+        const res = await fetch('/api/v1/assistant/nocturnal/latest');
+        const json = await res.json();
+        if (json.success && json.data) {
+          renderNocturnalTelemetry(json.data);
+          showToast('Loaded latest nocturnal intelligence briefing', '🌙');
+        }
+      } catch (err) {
+        showToast('Running nocturnal cycle...', '🌙');
+        triggerNocturnalRun();
+      }
+    }
+
+    async function triggerNocturnalRun() {
+      const btn = document.getElementById('nocturnalRunBtn');
+      const codeView = document.getElementById('codeView');
+      const codeTitle = document.getElementById('codeTitle');
+      if (btn) btn.disabled = true;
+      playSfx('click');
+      showToast('Executing nocturnal provider discovery cycle...', '🌙');
+
+      codeTitle.textContent = '🌙 Nocturnal Provider Discovery Engine';
+      codeView.textContent = '// Running nocturnal provider discovery & EOL lifecycle audit...\n// Scanning service universe for zero-touch APIs...\n// Applying mandate: "We will pay more for automation and speed"...\n';
+
+      try {
+        const res = await fetch('/api/v1/assistant/nocturnal/run', { method: 'POST' });
+        const json = await res.json();
+        if (json.success && json.data) {
+          renderNocturnalTelemetry(json.data);
+          playSfx('success');
+          showToast('Nocturnal cycle finished & report generated!', '✓');
+        } else {
+          throw new Error(json.error || 'Execution failed');
+        }
+      } catch (err) {
+        codeView.textContent = `// Error executing nocturnal cycle: ${err.message}`;
+        showToast('Nocturnal run failed', '❌');
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    function renderNocturnalTelemetry(report) {
+      const candidatesEl = document.getElementById('nocturnalCandidatesCount');
+      const adoptionEl = document.getElementById('nocturnalAdoptionCount');
+      const alertsEl = document.getElementById('nocturnalAlertsCount');
+      const codeView = document.getElementById('codeView');
+      const codeTitle = document.getElementById('codeTitle');
+      const lineCount = document.getElementById('lineCount');
+
+      if (candidatesEl) candidatesEl.textContent = report.summary.candidatesScanned;
+      if (adoptionEl) adoptionEl.textContent = `${report.summary.topRecommendedCount} Recommended`;
+      if (alertsEl) alertsEl.textContent = `${report.summary.alertsCount} Active`;
+
+      codeTitle.textContent = `🌙 Nocturnal Report: ${report.cycleId}`;
+
+      const formattedJson = JSON.stringify(report, null, 2);
+      codeView.textContent = formattedJson;
+      lineCount.textContent = `(${formattedJson.split('\n').length} lines)`;
+
+      // Render executive summary into the preview canvas iframe
+      const previewFrame = document.getElementById('previewFrame');
+      if (previewFrame) {
+        const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+        doc.open();
+        doc.write(`
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <script src="https://cdn.tailwindcss.com"><\/script>
+            <style>
+              body { margin: 0; padding: 1.5rem; background-color: #070a11; color: #cbd5e1; font-family: monospace; }
+            </style>
+          </head>
+          <body class="p-6 text-xs">
+            <div class="border-b border-cyan-800/60 pb-3 mb-4">
+              <div class="text-cyan-400 font-bold text-sm tracking-wider uppercase">NOCTURNAL INTELLIGENCE BRIEFING</div>
+              <div class="text-gray-500 text-[11px]">Cycle: ${report.cycleId} | Policy: "Pay more for automation & speed"</div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 mb-5">
+              <div class="bg-gray-900/90 border border-gray-800 p-3 rounded-lg">
+                <div class="text-gray-400 text-[10px]">CANDIDATES SCANNED</div>
+                <div class="text-cyan-400 text-lg font-bold">${report.summary.candidatesScanned}</div>
+              </div>
+              <div class="bg-gray-900/90 border border-gray-800 p-3 rounded-lg">
+                <div class="text-gray-400 text-[10px]">ZERO-TOUCH INTEGRATIONS</div>
+                <div class="text-emerald-400 text-lg font-bold">${report.summary.topRecommendedCount}</div>
+              </div>
+              <div class="bg-gray-900/90 border border-gray-800 p-3 rounded-lg">
+                <div class="text-gray-400 text-[10px]">MAINTENANCE / EOL ALERTS</div>
+                <div class="text-amber-400 text-lg font-bold">${report.summary.alertsCount}</div>
+              </div>
+            </div>
+
+            <div class="text-gray-300 font-semibold mb-2 uppercase text-[11px] tracking-wider">Top Recommended Providers:</div>
+            <div class="space-y-2 mb-5">
+              ${report.topRecommendations.map(r => `
+                <div class="p-3 bg-gray-900/60 border border-gray-800 rounded-lg flex flex-col gap-1">
+                  <div class="flex justify-between items-center">
+                    <span class="text-white font-bold text-xs">${r.name}</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Score: ${r.compositeScore}/100</span>
+                  </div>
+                  <div class="text-gray-400 text-[11px]">${r.category} • ~$${r.monthlyCostEst}/mo • Zero-Touch: ${r.zeroTouchScore}/100</div>
+                  <div class="text-cyan-300 text-[10px]">${r.economicJustification}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="text-gray-300 font-semibold mb-2 uppercase text-[11px] tracking-wider">Active Services EOL & Maintenance Windows:</div>
+            <div class="space-y-1.5">
+              ${report.currentServicesAudit.alerts.map(a => `
+                <div class="p-2.5 bg-gray-900/40 border border-gray-800 rounded text-[11px] flex items-center justify-between">
+                  <span class="text-amber-300">[${a.severity}] ${a.service}</span>
+                  <span class="text-gray-400 text-[10px]">${a.message || a.impact}</span>
+                </div>
+              `).join('')}
+            </div>
+          </body>
+          </html>
+        `);
+        doc.close();
+      }
+    }
+
+
+    // Loadout Demos
+    function loadDemo(num) {
+      playSfx('click');
+      if (num === 1) {
+        document.getElementById('promptInput').value = "Build a high-velocity conversion hero banner with waitlist CTA";
+      } else if (num === 2) {
+        document.getElementById('promptInput').value = "Build a developer cluster telemetry dashboard with latency gauges and log feed";
+      } else if (num === 3) {
+        document.getElementById('promptInput').value = "Build a 3-tier enterprise SaaS pricing table with feature matrix";
+      } else if (num === 4) {
+        document.getElementById('promptInput').value = "Build a fortified auth and 2FA key gate with semantic guardrails";
+      } else if (num === 5) {
+        document.getElementById('promptInput').value = "Build an express checkout modal with Link by Stripe, Apple Pay, Google Pay, and PayPal";
+      }
+      synthesize();
+    }
+
+    async function synthesize() {
+      playSfx('click');
+      const prompt = document.getElementById('promptInput').value.trim();
+      if (!prompt) return;
+
+      // Contextual AI targeting check: If an element is selected, execute surgical contextual transform!
+      if (selectedNodeData) {
+        return executeContextualTransform(prompt);
+      }
+
+      const mode = document.getElementById('engineMode').value;
+      const codeView = document.getElementById('codeView');
+      const startTime = performance.now();
+      codeView.textContent = '// Synthesizing via Amicus WebDaaS Core...';
+
+      const endpoint = mode === 'deterministic' ? '/api/v1/assistant/synthesize' : '/api/v1/assistant/ai-synthesize';
+      const body = mode === 'deterministic' 
+        ? JSON.stringify({ intent: prompt })
+        : JSON.stringify({ prompt, modelPreference: mode });
+
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body
+        });
+        const json = await res.json();
+        const elapsed = Math.round(performance.now() - startTime);
+        document.getElementById('pingBadge').textContent = `${elapsed}ms`;
+
+        let code = '';
+        let audit = null;
+
+        if (mode === 'deterministic' && json.data) {
+          code = json.data.code;
+          audit = json.data.audit;
+        } else if (json.code) {
+          code = json.code;
+        }
+
+        if (code) {
+          blockCounter++;
+          document.getElementById('blockId').textContent = `BLOCK #${String(blockCounter).padStart(2, '0')}`;
+          codeView.textContent = code;
+          updatePreview(code);
+          updateLineCount(code);
+          decomposeAndRenderElementTree(code);
+          playSfx('success');
+          showToast(`Synthesized in ${elapsed}ms`, '⚡');
+
+          if (audit) {
+            const grade = document.getElementById('auditGrade');
+            const bar = document.getElementById('auditBar');
+            grade.textContent = `GRADE ${audit.grade} (${audit.score})`;
+            bar.style.width = `${audit.score}%`;
+          }
+        } else {
+          codeView.textContent = `// Error: ${json.error || 'Failed to synthesize'}`;
+          showToast(json.error || 'Synthesis failed', '⚠');
+        }
+      } catch (err) {
+        codeView.textContent = `// Network Error: ${err.message}`;
+        showToast(err.message, '⚠');
+      }
+    }
+
+    async function scaffoldApi() {
+      playSfx('click');
+      const resource = document.getElementById('resourceInput').value.trim();
+      if (!resource) return;
+
+      const codeView = document.getElementById('codeView');
+      codeView.textContent = '// Scaffolding Fortified REST Controller...';
+
+      try {
+        const res = await fetch('/api/v1/assistant/scaffold-api', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resourceName: resource })
+        });
+        const json = await res.json();
+        if (json.success && json.data) {
+          blockCounter++;
+          document.getElementById('blockId').textContent = `BLOCK #${String(blockCounter).padStart(2, '0')}`;
+          codeView.textContent = json.data.code;
+          updateLineCount(json.data.code);
+          updatePreview(`
+            <div class="p-8 max-w-xl mx-auto rounded-xl bg-gray-900 border border-gray-800 text-white font-mono space-y-4">
+              <div class="flex items-center gap-2 pb-2 border-b border-gray-800">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span>
+                <span class="font-bold text-sm text-emerald-400">REST CONTROLLER DEPLOYED</span>
+              </div>
+              <p class="text-xs text-gray-300">Mounted base route: <code class="text-cyan-400">${json.data.routeBase}</code></p>
+              <div class="bg-black/60 p-3 rounded text-xs space-y-1 text-gray-400">
+                <div>GET /api/v1/${resource}s (List)</div>
+                <div>POST /api/v1/${resource}s (Create)</div>
+                <div>GET /api/v1/${resource}s/:id (Read)</div>
+                <div>DELETE /api/v1/${resource}s/:id (Purge)</div>
+              </div>
+            </div>
+          `);
+          playSfx('success');
+          showToast(`Controller scaffolded for ${resource}`, '⚙️');
+        } else {
+          codeView.textContent = `// Error: ${json.error || 'Failed to scaffold'}`;
+        }
+      } catch (err) {
+        codeView.textContent = `// Network Error: ${err.message}`;
+      }
+    }
+
+    async function applyCodePatch() {
+      playSfx('click');
+      const currentCode = document.getElementById('codeView').textContent;
+      const targetChunk = document.getElementById('targetChunkInput').value;
+      const replacementChunk = document.getElementById('replacementChunkInput').value;
+
+      try {
+        const res = await fetch('/api/v1/assistant/patch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sourceCode: currentCode, targetChunk, replacementChunk })
+        });
+        const json = await res.json();
+        if (json.success) {
+          blockCounter++;
+          document.getElementById('blockId').textContent = `BLOCK #${String(blockCounter).padStart(2, '0')}`;
+          document.getElementById('codeView').textContent = json.result;
+          updatePreview(json.result);
+          updateLineCount(json.result);
+          playSfx('success');
+          showToast('Surgical patch applied cleanly', '🩹');
+        } else {
+          showToast(json.error || 'Patch mismatch', '⚠');
+        }
+      } catch (err) {
+        showToast(err.message, '⚠');
+      }
+    }
+
+    function updateLineCount(code) {
+      const lines = code ? code.split('\n').length : 0;
+      document.getElementById('lineCount').textContent = `(${lines} lines)`;
+    }
+
+    function updatePreview(code) {
+      const frame = document.getElementById('previewFrame');
+      const doc = frame.contentDocument || frame.contentWindow.document;
+
+      // Ensure elements have deterministic data-amicus-id attributes for element-level AI targeting
+      let counter = 0;
+      let instrumented = code.replace(/<([a-z0-9]+)(\s+[^>]*?)?>/gi, (match, tag, attrs = '') => {
+        const lower = tag.toLowerCase();
+        if (['html', 'head', 'body', 'script', 'style', 'path', 'svg', 'br', 'hr'].includes(lower)) return match;
+        if (attrs.includes('data-amicus-id=')) return match;
+        counter++;
+        return `<${tag} data-amicus-id="el-${counter}"${attrs}>`;
+      });
+
+      // In-Situ Tactical Inspector Script with continuous element selection & Figma Dev Mode
+      const inspectorScript = `
+        <script>
+          const tooltip = document.createElement('div');
+          tooltip.style.position = 'fixed';
+          tooltip.style.bottom = '12px';
+          tooltip.style.right = '12px';
+          tooltip.style.background = 'rgba(6, 18, 36, 0.95)';
+          tooltip.style.border = '1px solid #06b6d4';
+          tooltip.style.color = '#38bdf8';
+          tooltip.style.padding = '6px 12px';
+          tooltip.style.borderRadius = '6px';
+          tooltip.style.fontFamily = 'monospace';
+          tooltip.style.fontSize = '11px';
+          tooltip.style.zIndex = '999999';
+          tooltip.style.pointerEvents = 'none';
+          tooltip.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
+          document.body.appendChild(tooltip);
+
+          let prevTarget = null;
+          let selectedTarget = null;
+
+          window.addEventListener('message', (e) => {
+            if (e.data && e.data.type === 'SELECT_ELEMENT_BY_ID') {
+              const el = document.querySelector('[data-amicus-id="' + e.data.id + '"]');
+              if (el) {
+                if (selectedTarget) {
+                  selectedTarget.style.outline = '';
+                  selectedTarget.style.boxShadow = '';
+                }
+                selectedTarget = el;
+                selectedTarget.style.outline = '2px solid #06b6d4';
+                selectedTarget.style.outlineOffset = '-2px';
+                selectedTarget.style.boxShadow = '0 0 16px rgba(6,182,212,0.6)';
+                selectedTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                const rect = el.getBoundingClientRect();
+                window.parent.postMessage({
+                  type: 'INSPECTOR_NODE_SELECTED',
+                  amicusId: el.getAttribute('data-amicus-id') || '',
+                  tagName: el.tagName.toLowerCase(),
+                  className: el.className || '',
+                  outerHTML: el.outerHTML || '',
+                  width: rect.width,
+                  height: rect.height
+                }, '*');
+              }
+            } else if (e.data && e.data.type === 'CLEAR_SELECTION') {
+              if (selectedTarget) {
+                selectedTarget.style.outline = '';
+                selectedTarget.style.boxShadow = '';
+                selectedTarget = null;
+              }
+            }
+          });
+
+          document.addEventListener('mouseover', (e) => {
+            if (e.target === tooltip || e.target === document.body || e.target === document.documentElement) return;
+            if (prevTarget && prevTarget !== selectedTarget) {
+              prevTarget.style.outline = '';
+              prevTarget.style.boxShadow = '';
+            }
+            prevTarget = e.target;
+            if (prevTarget !== selectedTarget) {
+              prevTarget.style.outline = '2px dashed #06b6d4';
+              prevTarget.style.outlineOffset = '-2px';
+            }
+            const rect = e.target.getBoundingClientRect();
+            const aid = e.target.getAttribute('data-amicus-id') || '';
+            tooltip.innerHTML = '<strong>&lt;' + e.target.tagName.toLowerCase() + '&gt;</strong> ' + 
+              (aid ? '<span style="color:#06b6d4">#' + aid + '</span> ' : '') + 
+              Math.round(rect.width) + 'x' + Math.round(rect.height) + 'px' + 
+              (e.target.className ? ' <span style="opacity:0.6">.' + e.target.className.split(' ').slice(0, 3).join('.') + '</span>' : '');
+          });
+
+          document.addEventListener('mouseout', (e) => {
+            if (e.target === prevTarget && prevTarget !== selectedTarget) {
+              prevTarget.style.outline = '';
+              prevTarget.style.boxShadow = '';
+            }
+          });
+
+          document.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (e.target === tooltip || e.target === document.body || e.target === document.documentElement) return;
+            if (selectedTarget) {
+              selectedTarget.style.outline = '';
+              selectedTarget.style.boxShadow = '';
+            }
+            selectedTarget = e.target;
+            selectedTarget.style.outline = '2px solid #38bdf8';
+            selectedTarget.style.outlineOffset = '-2px';
+            selectedTarget.style.boxShadow = '0 0 16px rgba(56,189,248,0.6)';
+
+            const rect = e.target.getBoundingClientRect();
+            const aid = e.target.getAttribute('data-amicus-id') || '';
+            window.parent.postMessage({
+              type: 'INSPECTOR_NODE_SELECTED',
+              amicusId: aid,
+              tagName: e.target.tagName.toLowerCase(),
+              className: e.target.className || '',
+              outerHTML: e.target.outerHTML || '',
+              width: rect.width,
+              height: rect.height
+            }, '*');
+          });
+        <\/script>
+      `;
+
+      const theme = THEMES[currentTheme] || THEMES.obsidian;
+      doc.open();
+      doc.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <script src="https://cdn.tailwindcss.com"><\/script>
+          <style>
+            body { margin: 0; padding: 1.5rem; background-color: ${theme.bg}; color: ${theme.text}; font-family: system-ui, -apple-system, sans-serif; transition: background-color 0.2s, color 0.2s; }
+          </style>
+        </head>
+        <body>
+          ${instrumented}
+          ${inspectorScript}
+        </body>
+        </html>
+      `);
+      doc.close();
+    }
+
+    function changeTheme(themeId) {
+      if (!THEMES[themeId]) return;
+      currentTheme = themeId;
+      playSfx('click');
+      const select = document.getElementById('themeSelect');
+      if (select) select.value = themeId;
+
+      const theme = THEMES[themeId];
+      const previewWrapper = document.getElementById('previewWrapper');
+      if (previewWrapper) {
+        previewWrapper.style.backgroundColor = theme.bg;
+      }
+
+      showToast(`Theme switched to ${theme.name}`, '🎨');
+      const currentCode = document.getElementById('codeView').textContent;
+      if (currentCode && !currentCode.startsWith('//')) {
+        updatePreview(currentCode);
+      }
+    }
+
+    function appendPromptChip(chipText) {
+      const input = document.getElementById('promptInput');
+      if (!input) return;
+      playSfx('click');
+      const current = input.value.trim();
+      if (current) {
+        input.value = `${current}, ${chipText}`;
+      } else {
+        input.value = chipText;
+      }
+      input.focus();
+      showToast('Appended refinement modifier', '✨');
+    }
+
+    function copyAsJsx() {
+      playSfx('click');
+      const code = document.getElementById('codeView').textContent;
+      if (!code || code.startsWith('//')) {
+        showToast('Please synthesize or load a component first', '⚠️');
+        return;
+      }
+
+      // Transform raw HTML into modern React JSX Component
+      let jsx = code.replace(/\s*data-amicus-id=["'][^"']*["']/gi, '');
+      jsx = jsx.replace(/\bclass=/g, 'className=');
+      jsx = jsx.replace(/\bfor=/g, 'htmlFor=');
+      jsx = jsx.replace(/\btabindex=/g, 'tabIndex=');
+      jsx = jsx.replace(/\bautocomplete=/g, 'autoComplete=');
+      jsx = jsx.replace(/\bautofocus=/g, 'autoFocus=');
+      
+      // Auto-close void tags (input, img, hr, br) if unclosed
+      jsx = jsx.replace(/<(input|img|hr|br)([^>]*[^\/])>/gi, '<$1$2 />');
+
+      const componentCode = `// Synthesized by Amicus Web Assistant™ (WebDaaS Engine)
+import React from 'react';
+
+export default function SynthesizedComponent() {
+  return (
+    <>
+      ${jsx.split('\n').join('\n      ')}
+    </>
+  );
+}
+`;
+
+      navigator.clipboard.writeText(componentCode);
+      playSfx('success');
+      showToast('Copied ready-to-use React JSX component', '⚛️');
+    }
+
+    function openInCodePen() {
+      playSfx('click');
+      const code = document.getElementById('codeView').textContent;
+      if (!code || code.startsWith('//')) {
+        showToast('Please synthesize or load a component first', '⚠️');
+        return;
+      }
+
+      const clean = code.replace(/\s*data-amicus-id=["'][^"']*["']/gi, '');
+      const theme = THEMES[currentTheme] || THEMES.obsidian;
+      
+      const payload = {
+        title: "Amicus Web Studio™ Synthesized Component",
+        description: "Generated with Amicus Web Assistant™ WebDaaS Engine",
+        html: clean,
+        css_external: "https://cdn.tailwindcss.com",
+        css: `body { background-color: ${theme.bg}; color: ${theme.text}; font-family: system-ui, sans-serif; padding: 1.5rem; }`
+      };
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = 'https://codepen.io/pen/define';
+      form.target = '_blank';
+
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'data';
+      input.value = JSON.stringify(payload);
+
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+
+      showToast('Opening in CodePen sandbox...', '🚀');
+    }
+
+    function setupCanvasResizer() {
+      const handle = document.getElementById('canvasResizeHandle');
+      const wrapper = document.getElementById('previewWrapper');
+      const container = document.getElementById('canvasViewportContainer');
+      const pill = document.getElementById('canvasDimensionPill');
+      const pillText = document.getElementById('dimensionPillText');
+      if (!handle || !wrapper || !container) return;
+
+      let isDragging = false;
+      let startX = 0;
+      let startWidth = 0;
+
+      handle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        isDragging = true;
+        startX = e.clientX;
+        startWidth = wrapper.offsetWidth;
+        wrapper.style.transition = 'none';
+        document.body.style.cursor = 'ew-resize';
+        document.body.style.userSelect = 'none';
+        if (pill) {
+          pill.classList.remove('hidden');
+          if (pillText) pillText.textContent = `${wrapper.offsetWidth} × ${wrapper.offsetHeight}px`;
+        }
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const deltaX = (e.clientX - startX) * 2;
+        const newWidth = Math.max(320, Math.min(container.offsetWidth - 24, startWidth + deltaX));
+        wrapper.style.maxWidth = `${newWidth}px`;
+        wrapper.style.width = `${newWidth}px`;
+        if (pillText) pillText.textContent = `${Math.round(newWidth)} × ${wrapper.offsetHeight}px`;
+        const label = document.getElementById('viewportLabel');
+        if (label) label.textContent = `[Custom ${Math.round(newWidth)}px]`;
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        wrapper.style.transition = 'max-width 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        if (pill) setTimeout(() => pill.classList.add('hidden'), 1500);
+      });
+    }
+
+    function reloadPreview() {
+      playSfx('click');
+      const currentCode = document.getElementById('codeView').textContent;
+      if (currentCode && !currentCode.startsWith('//')) {
+        updatePreview(currentCode);
+        showToast('Canvas reloaded', '⟳');
+      }
+    }
+
+    function copyCode() {
+      const code = document.getElementById('codeView').textContent;
+      const clean = code.replace(/\s*data-amicus-id=["'][^"']*["']/gi, '');
+      navigator.clipboard.writeText(clean);
+      playSfx('success');
+      showToast('Clean code copied to clipboard', '✓');
+    }
+
+    function downloadCode() {
+      playSfx('click');
+      const code = document.getElementById('codeView').textContent;
+      const clean = code.replace(/\s*data-amicus-id=["'][^"']*["']/gi, '');
+      const theme = THEMES[currentTheme] || THEMES.obsidian;
+      const fullHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amicus WebDaaS Synthesized Component</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { margin: 0; padding: 1.5rem; background-color: ${theme.bg}; color: ${theme.text}; font-family: system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body>
+${clean}
+</body>
+</html>`;
+      const blob = new Blob([fullHtml], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'amicus-component.html';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Exported standalone HTML bundle', '💾');
+    }
+
+    // RAYCAST / LINEAR COMMAND PALETTE CONTROLS
+    function openPalette() {
+      playSfx('click');
+      const modal = document.getElementById('commandPaletteModal');
+      const input = document.getElementById('paletteInput');
+      modal.classList.remove('hidden');
+      input.value = '';
+      filteredCommands = [...COMMANDS];
+      selectedPaletteIndex = 0;
+      renderPaletteItems();
+      setTimeout(() => input.focus(), 50);
+    }
+
+    function closePalette() {
+      document.getElementById('commandPaletteModal').classList.add('hidden');
+    }
+
+    function filterPalette() {
+      const query = document.getElementById('paletteInput').value.toLowerCase().trim();
+      if (!query) {
+        filteredCommands = [...COMMANDS];
+      } else {
+        filteredCommands = COMMANDS.filter(c => 
+          c.title.toLowerCase().includes(query) || 
+          c.category.toLowerCase().includes(query)
+        );
+      }
+      selectedPaletteIndex = 0;
+      renderPaletteItems();
+    }
+
+    function renderPaletteItems() {
+      const list = document.getElementById('paletteList');
+      if (filteredCommands.length === 0) {
+        list.innerHTML = `<div class="p-4 text-center text-xs text-gray-500">No matching commands found.</div>`;
+        return;
+      }
+      list.innerHTML = filteredCommands.map((c, i) => `
+        <div onclick="executePaletteItem(${i})" class="palette-item ${i === selectedPaletteIndex ? 'active' : ''} px-3 py-2 rounded-lg flex items-center justify-between text-xs cursor-pointer border border-transparent transition">
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-gray-400 uppercase font-semibold w-16">${c.category}</span>
+            <span class="text-gray-200 font-medium">${c.title}</span>
+          </div>
+          ${c.hotkey ? `<span class="text-[10px] text-gray-500 bg-gray-900 px-1.5 py-0.5 rounded border border-gray-800">${c.hotkey}</span>` : ''}
+        </div>
+      `).join('');
+    }
+
+    function handlePaletteKeydown(e) {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectedPaletteIndex = (selectedPaletteIndex + 1) % filteredCommands.length;
+        renderPaletteItems();
+        playSfx('click');
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectedPaletteIndex = (selectedPaletteIndex - 1 + filteredCommands.length) % filteredCommands.length;
+        renderPaletteItems();
+        playSfx('click');
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        executePaletteItem(selectedPaletteIndex);
+      } else if (e.key === 'Escape') {
+        closePalette();
+      }
+    }
+
+    function executePaletteItem(index) {
+      if (filteredCommands[index]) {
+        closePalette();
+        filteredCommands[index].action();
+      }
+    }
+
+    // SHORTCUTS MODAL
+    function openShortcutsModal() {
+      playSfx('click');
+      document.getElementById('shortcutsModal').classList.remove('hidden');
+    }
+
+    function closeShortcutsModal() {
+      document.getElementById('shortcutsModal').classList.add('hidden');
+    }
+
+    // GLOBAL KEYBOARD SHORTCUTS MATRIX
+    window.addEventListener('keydown', (e) => {
+      // Cmd+K or Ctrl+K: Open Command Palette
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+        e.preventDefault();
+        openPalette();
+        return;
+      }
+
+      // Close open modals on Escape
+      if (e.key === 'Escape') {
+        closePalette();
+        closeShortcutsModal();
+        return;
+      }
+
+      // If user is typing in an input or textarea, don't hijack single key triggers
+      const isInputActive = ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
+
+      // ? : Keyboard shortcuts cheat sheet
+      if (!isInputActive && e.key === '?') {
+        e.preventDefault();
+        openShortcutsModal();
+        return;
+      }
+
+      // Ctrl + Enter or Cmd + Enter: Synthesize
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        synthesize();
+      }
+
+      // Alt + 1, 2, 3, 4, 5: Load Demos
+      if (e.altKey && e.key === '1') { e.preventDefault(); loadDemo(1); }
+      if (e.altKey && e.key === '2') { e.preventDefault(); loadDemo(2); }
+      if (e.altKey && e.key === '3') { e.preventDefault(); loadDemo(3); }
+      if (e.altKey && e.key === '4') { e.preventDefault(); loadDemo(4); }
+      if (e.altKey && e.key === '5') { e.preventDefault(); loadDemo(5); }
+
+      // Alt + I: Toggle In-Situ Inspector
+      if (e.altKey && (e.key === 'i' || e.key === 'I')) {
+        e.preventDefault();
+        toggleInspector();
+      }
+
+      // Alt + C: Copy Code
+      if (e.altKey && (e.key === 'c' || e.key === 'C')) {
+        e.preventDefault();
+        copyCode();
+      }
+
+      // Alt + J: Copy as React JSX
+      if (e.altKey && (e.key === 'j' || e.key === 'J')) {
+        e.preventDefault();
+        copyAsJsx();
+      }
+
+      // Alt + N: Switch to Nocturnal Intelligence
+      if (e.altKey && (e.key === 'n' || e.key === 'N')) {
+        e.preventDefault();
+        switchTab('nocturnal');
+      }
+    });
+
+    // Auto-load Developer Telemetry Deck Demo and initialize resizer on initial boot
+    window.addEventListener('DOMContentLoaded', () => {
+      loadDemo(2);
+      setupCanvasResizer();
+    });
+  </script>
+</body>
+</html>
