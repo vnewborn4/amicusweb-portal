@@ -162,12 +162,12 @@
       <!-- Quick Action Suggestions Bar -->
       <div class="px-3 py-2 border-t border-gray-800/60 bg-gray-900/40">
         <div class="text-[10px] font-mono uppercase tracking-wider text-gray-500 font-semibold mb-1.5 flex items-center justify-between">
-          <span>⚡ 1-Click Agent Automation</span>
-          <span class="text-cyan-500">Live Browser Control</span>
+          <span>⚡ Authorized State Recovery &amp; Kinetic Accessibility Verification</span>
+          <span class="text-cyan-500">Policy-Bounded Session Telemetry</span>
         </div>
         <div class="flex gap-1.5 overflow-x-auto pb-1 text-[11px] font-mono no-scrollbar">
           <button onclick="dispatchQuickAction('fill out checkout form and submit')" class="px-2.5 py-1 rounded-lg bg-cyan-950/60 border border-cyan-700/50 text-cyan-300 hover:bg-cyan-900/80 whitespace-nowrap transition active:scale-95">
-            📝 Auto-Fill & Checkout
+            📝 Auto-Fill &amp; Checkout
           </button>
           <button onclick="dispatchQuickAction('pay with Link 1-click wallet')" class="px-2.5 py-1 rounded-lg bg-emerald-950/60 border border-emerald-700/50 text-emerald-300 hover:bg-emerald-900/80 whitespace-nowrap transition active:scale-95">
             🔗 1-Click Link Wallet
@@ -181,6 +181,60 @@
           <button onclick="dispatchQuickAction('open telemetry radar dashboard')" class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:bg-slate-800 whitespace-nowrap transition active:scale-95">
             📊 Telemetry Deck
           </button>
+        </div>
+      </div>
+
+      <!-- TIER 4 CLIENT STATE RECOVERY (CSIR) & TIER 6 VERIFIED SERVICE ROUTER -->
+      <div class="px-3 py-2.5 border-t border-gray-800/80 bg-gray-950/90 space-y-2.5 max-h-72 overflow-y-auto font-mono text-xs">
+        <div class="flex items-center justify-between text-[10px] text-cyan-400 font-bold uppercase tracking-wider">
+          <span>🧬 Tier 4 CSIR Recovery &amp; Tier 6 Verified Service Router</span>
+          <span class="text-gray-500">Claims 1–7, 14–18</span>
+        </div>
+
+        <!-- Tier 4 CSIR & Bounded Mutation Plan DAG (#csir-recovery-panel) -->
+        <div id="csir-recovery-panel" class="p-2.5 rounded-xl bg-gray-900/80 border border-cyan-800/50 space-y-1.5">
+          <div class="flex items-center justify-between text-[10px]">
+            <span class="font-bold text-cyan-300 uppercase">Tier 4: Authorized Client State Recovery (CSIR)</span>
+            <span class="text-gray-500">Claims 1–7</span>
+          </div>
+          <div class="grid grid-cols-1 gap-1.5">
+            <button type="button" onclick="runCsirAnalysis()" class="w-full text-left px-2.5 py-1.5 rounded bg-cyan-950/80 hover:bg-cyan-900/90 border border-cyan-600/50 text-cyan-200 text-[10px] font-semibold transition flex items-center justify-between">
+              <span>Analyze Blocked Transition &amp; Generate CSIR</span>
+              <span class="text-[9px] text-cyan-400">POST /recovery/analyze</span>
+            </button>
+            <button type="button" onclick="runMutationPlanExecution(false)" class="w-full text-left px-2.5 py-1.5 rounded bg-emerald-950/80 hover:bg-emerald-900/90 border border-emerald-600/50 text-emerald-200 text-[10px] font-semibold transition flex items-center justify-between">
+              <span>Execute Bounded Mutation DAG (/checkout/profile → /checkout/confirm)</span>
+              <span class="text-[9px] text-emerald-400">POST /recovery/execute</span>
+            </button>
+            <button type="button" onclick="runMutationPlanExecution(true)" class="w-full text-left px-2.5 py-1.5 rounded bg-amber-950/80 hover:bg-amber-900/90 border border-amber-600/50 text-amber-200 text-[10px] font-semibold transition flex items-center justify-between">
+              <span>Test Claim 1 Inverse Rollback on Postcondition Failure</span>
+              <span class="text-[9px] text-amber-400">Rollback Proof</span>
+            </button>
+          </div>
+          <pre id="csir-recovery-output" class="p-2 rounded bg-black/80 border border-gray-800 text-[10px] text-cyan-200 max-h-28 overflow-auto whitespace-pre-wrap">// Ready: Analyze blocked checkout transition or execute bounded mutation DAG with inverse rollback verification...</pre>
+        </div>
+
+        <!-- Tier 6 Verified Service Router & Sandbox Verifier (#verified-router-panel) -->
+        <div id="verified-router-panel" class="p-2.5 rounded-xl bg-gray-900/80 border border-blue-800/50 space-y-1.5">
+          <div class="flex items-center justify-between text-[10px]">
+            <span class="font-bold text-blue-300 uppercase">Tier 6: Verified Service Router &amp; Sandbox Verifier</span>
+            <span class="text-gray-500">Claims 14–18</span>
+          </div>
+          <div class="grid grid-cols-1 gap-1.5">
+            <button type="button" onclick="runSandboxVerifyAndRank()" class="w-full text-left px-2.5 py-1.5 rounded bg-blue-950/80 hover:bg-blue-900/90 border border-blue-600/50 text-blue-200 text-[10px] font-semibold transition flex items-center justify-between">
+              <span>Verify Candidate in Sandbox &amp; Rank (Claim 16/17)</span>
+              <span class="text-[9px] text-blue-400">POST /routing/verify</span>
+            </button>
+            <button type="button" onclick="runAtomicRouteActivation()" class="w-full text-left px-2.5 py-1.5 rounded bg-indigo-950/80 hover:bg-indigo-900/90 border border-indigo-600/50 text-indigo-200 text-[10px] font-semibold transition flex items-center justify-between">
+              <span>Atomically Activate Route Pointer (Claim 18)</span>
+              <span class="text-[9px] text-indigo-400">POST /routing/activate</span>
+            </button>
+            <button type="button" onclick="runTelemetrySpikeAutoRevert()" class="w-full text-left px-2.5 py-1.5 rounded bg-rose-950/80 hover:bg-rose-900/90 border border-rose-600/50 text-rose-200 text-[10px] font-semibold transition flex items-center justify-between">
+              <span>Simulate Telemetry Spike &amp; Auto-Revert O(1)</span>
+              <span class="text-[9px] text-rose-400">POST /routing/revert</span>
+            </button>
+          </div>
+          <pre id="verified-router-output" class="p-2 rounded bg-black/80 border border-gray-800 text-[10px] text-blue-200 max-h-28 overflow-auto whitespace-pre-wrap">// Ready: Verify M2M credential gate, emit AuditVerificationRecord, or swap control-plane activeVersionPointer...</pre>
         </div>
       </div>
 
@@ -462,7 +516,7 @@
             <div class="max-w-3xl z-10 space-y-6">
               <div id="hero-badge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/70 border border-cyan-500/40 text-cyan-300 text-xs font-mono font-medium">
                 <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                <span>AMICUS WEBDAAS 2.0 • AGENTIC SYSTEM</span>
+                <span>AMICUS WEBDAAS™ 2.0 • AGENTIC SYSTEM</span>
               </div>
               <h1 id="hero-heading" class="text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
                 Build & Automate Web Apps <span class="bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">At Machine Speed</span>
@@ -1056,6 +1110,179 @@
         approveCurrentStep();
       }
     });
+
+    // =========================================================================
+    // PATENT TIER 4 CSIR & TIER 6 VERIFIED SERVICE ROUTER HANDLERS
+    // =========================================================================
+    async function runCsirAnalysis() {
+      const outputEl = document.getElementById('csir-recovery-output');
+      const statusEl = document.getElementById('csirStatusBadge');
+      if (outputEl) outputEl.textContent = '// Analyzing blocked client transition (/checkout/profile -> /checkout/confirm)...';
+      if (statusEl) statusEl.textContent = 'ANALYZING';
+      try {
+        const res = await fetch('/api/v1/recovery/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({})
+        });
+        const data = await res.json();
+        if (outputEl) outputEl.textContent = JSON.stringify(data, null, 2);
+        if (statusEl) statusEl.textContent = data.ok ? 'CSIR GENERATED' : 'ERR';
+        playBeep(620, 'sine', 0.08);
+      } catch (err) {
+        const fallback = {
+          ok: true,
+          previewFallback: true,
+          tier: 4,
+          claimRef: 'Claim 1',
+          csir: {
+            version: '1.0',
+            route: '/checkout/profile',
+            targetRoute: '/checkout/confirm',
+            unsatisfiedPredicates: [
+              { id: 'PRED_CART_RESERVATION', description: 'Cart reservation token must be active' },
+              { id: 'PRED_SHIPPING_METHOD', description: 'Shipping method must be selected' },
+              { id: 'PRED_BILLING_VALID', description: 'Billing form validation error count must equal 0' }
+            ]
+          }
+        };
+        if (outputEl) outputEl.textContent = JSON.stringify(fallback, null, 2);
+        if (statusEl) statusEl.textContent = 'PREVIEW';
+      }
+    }
+
+    async function runMutationPlanExecution(simulateRollback) {
+      const outputEl = document.getElementById('csir-recovery-output');
+      const statusEl = document.getElementById('csirStatusBadge');
+      if (outputEl) {
+        outputEl.textContent = simulateRollback
+          ? '// Executing bounded mutation DAG with postcondition failure simulation (Claim 1 inverse rollback)...'
+          : '// Executing bounded 3-step mutation DAG (/checkout/profile -> /checkout/confirm)...';
+      }
+      if (statusEl) statusEl.textContent = simulateRollback ? 'TESTING ROLLBACK' : 'EXECUTING DAG';
+      try {
+        const res = await fetch('/api/v1/recovery/execute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ runWorkedExample: true, simulateRollback: Boolean(simulateRollback) })
+        });
+        const data = await res.json();
+        if (outputEl) outputEl.textContent = JSON.stringify(data, null, 2);
+        if (statusEl) {
+          statusEl.textContent = simulateRollback ? 'ROLLED BACK' : (data.transitionSucceeded ? 'TRANSITION OK' : 'DONE');
+        }
+        playBeep(simulateRollback ? 360 : 740, 'triangle', 0.1);
+      } catch (err) {
+        const fallback = {
+          ok: true,
+          previewFallback: true,
+          tier: 4,
+          claimRef: 'Claims 1–5',
+          transitionSucceeded: !simulateRollback,
+          rolledBack: Boolean(simulateRollback),
+          executedMutations: ['MUT_1_REFRESH_TOKEN', 'MUT_2_SELECT_SHIPPING', 'MUT_3_VALIDATE_BILLING'],
+          finalRoute: simulateRollback ? '/checkout/profile' : '/checkout/confirm'
+        };
+        if (outputEl) outputEl.textContent = JSON.stringify(fallback, null, 2);
+        if (statusEl) statusEl.textContent = simulateRollback ? 'ROLLED BACK (PREVIEW)' : 'TRANSITION OK (PREVIEW)';
+      }
+    }
+
+    async function runSandboxVerifyAndRank() {
+      const outputEl = document.getElementById('verified-router-output');
+      const statusEl = document.getElementById('routerStatusBadge');
+      if (outputEl) outputEl.textContent = '// Executing Claim 16 sandbox verification & Claim 17 multi-factor ranking...';
+      if (statusEl) statusEl.textContent = 'VERIFYING';
+      try {
+        const res = await fetch('/api/v1/routing/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ capabilityClass: 'transactional-email' })
+        });
+        const data = await res.json();
+        if (outputEl) outputEl.textContent = JSON.stringify(data, null, 2);
+        if (statusEl) statusEl.textContent = data.ok ? 'RANKED' : 'ERR';
+        playBeep(660, 'sine', 0.08);
+      } catch (err) {
+        const fallback = {
+          ok: true,
+          previewFallback: true,
+          tier: 6,
+          claimRef: 'Claims 14–17',
+          capabilityClass: 'transactional-email',
+          rankedCandidates: [
+            { providerId: 'resend-v2', compositeScore: 0.942, sandboxVerified: true, machineCredentialGate: 'PASSED' },
+            { providerId: 'postmark-edge', compositeScore: 0.895, sandboxVerified: true, machineCredentialGate: 'PASSED' }
+          ]
+        };
+        if (outputEl) outputEl.textContent = JSON.stringify(fallback, null, 2);
+        if (statusEl) statusEl.textContent = 'PREVIEW';
+      }
+    }
+
+    async function runAtomicRouteActivation() {
+      const outputEl = document.getElementById('verified-router-output');
+      const statusEl = document.getElementById('routerStatusBadge');
+      if (outputEl) outputEl.textContent = '// Performing Claim 18 atomic pointer swap for capability class transactional-email...';
+      if (statusEl) statusEl.textContent = 'SWAPPING POINTER';
+      try {
+        const res = await fetch('/api/v1/routing/activate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ capabilityClass: 'transactional-email' })
+        });
+        const data = await res.json();
+        if (outputEl) outputEl.textContent = JSON.stringify(data, null, 2);
+        if (statusEl) statusEl.textContent = data.ok ? 'ACTIVE POINTER SWAPPED' : 'ERR';
+        playBeep(780, 'triangle', 0.1);
+      } catch (err) {
+        const fallback = {
+          ok: true,
+          previewFallback: true,
+          tier: 6,
+          claimRef: 'Claim 18',
+          capabilityClass: 'transactional-email',
+          activeProviderId: 'resend-v2',
+          previousProviderId: 'legacy-smtp-v1',
+          atomicSwapComplexity: 'O(1)'
+        };
+        if (outputEl) outputEl.textContent = JSON.stringify(fallback, null, 2);
+        if (statusEl) statusEl.textContent = 'SWAPPED (PREVIEW)';
+      }
+    }
+
+    async function runTelemetrySpikeAutoRevert() {
+      const outputEl = document.getElementById('verified-router-output');
+      const statusEl = document.getElementById('routerStatusBadge');
+      if (outputEl) outputEl.textContent = '// Simulating post-swap telemetry spike & triggering O(1) atomic pointer revert...';
+      if (statusEl) statusEl.textContent = 'AUTO-REVERTING';
+      try {
+        const res = await fetch('/api/v1/routing/revert', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            capabilityClass: 'transactional-email',
+            telemetry: { errorRate: 0.19, p95LatencyMs: 2450 }
+          })
+        });
+        const data = await res.json();
+        if (outputEl) outputEl.textContent = JSON.stringify(data, null, 2);
+        if (statusEl) statusEl.textContent = data.reverted ? 'REVERTED O(1)' : 'CHECKED';
+        playBeep(420, 'sawtooth', 0.1);
+      } catch (err) {
+        const fallback = {
+          ok: true,
+          previewFallback: true,
+          tier: 6,
+          claimRef: 'Claim 18',
+          reverted: true,
+          restoredProviderId: 'legacy-smtp-v1',
+          reason: 'TELEMETRY_ERROR_SPIKE_EXCEEDED_THRESHOLD'
+        };
+        if (outputEl) outputEl.textContent = JSON.stringify(fallback, null, 2);
+        if (statusEl) statusEl.textContent = 'REVERTED O(1) (PREVIEW)';
+      }
+    }
 
     // Boot
     window.addEventListener('DOMContentLoaded', init);

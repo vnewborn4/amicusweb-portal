@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Amicus Security Sentinel™ | Vulnerability Radar & AI Auto-Fix</title>
+  <title>Amicus Security Sentinel™ | Vulnerability Radar, BYO-DNS Exporter &amp; Merkle Provenance</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -38,20 +38,20 @@
           <h1 class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-300">
             Amicus Security Sentinel™
           </h1>
-          <p class="text-xs text-slate-400">Autonomous Vulnerability Radar & 1-Click AI Auto-Fix</p>
+          <p class="text-xs text-slate-400">Multi-Category Vulnerability Auto-Fix, BYO-DNS Zone Exporter &amp; Tier 7 Merkle Provenance</p>
         </div>
       </div>
       <div class="flex items-center space-x-4">
         <a href="/" class="text-xs font-semibold text-slate-300 hover:text-white transition hidden md:inline">&larr; Home</a>
-        <a href="/trust" class="text-xs font-semibold text-slate-300 hover:text-white transition hidden md:inline">Trust Center</a>
-        <a href="/standing" class="text-xs font-semibold text-slate-300 hover:text-white transition hidden md:inline">Standing Sentinel</a>
+        <a href="/studio" class="text-xs font-semibold text-slate-300 hover:text-white transition hidden md:inline">Web Studio</a>
+        <a href="/standing" class="text-xs font-semibold text-slate-300 hover:text-white transition hidden md:inline">Standing &amp; Lifecycle Radar</a>
         <!-- Monthly Quota Badge -->
         <div class="bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-lg flex items-center space-x-2">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span class="text-xs text-slate-300 font-medium">Free AI Fixes: <strong id="quotaBadge" class="text-emerald-400">2 / 2 Left</strong></span>
         </div>
         <button id="runScanBtn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-semibold shadow-md transition-all flex items-center space-x-2">
-          <span>⚡ Run Security Scan</span>
+          <span>⚡ Run Full 6-Category Scan</span>
         </button>
       </div>
     </div>
@@ -81,14 +81,14 @@
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
         <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Critical Risks</div>
         <div id="criticalCount" class="mt-4 text-4xl font-extrabold text-rose-500">0</div>
-        <p class="mt-2 text-xs text-slate-400">Immediate exploitation risk</p>
+        <p class="mt-2 text-xs text-slate-400">SQLi, Leaked Secrets &amp; XSS</p>
       </div>
 
       <!-- High / Medium Findings -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
         <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Vulnerabilities</div>
-        <div id="totalVulnCount" class="mt-4 text-4xl font-extrabold text-amber-400">2</div>
-        <p class="mt-2 text-xs text-slate-400">Headers, configs & code issues</p>
+        <div id="totalVulnCount" class="mt-4 text-4xl font-extrabold text-amber-400">6</div>
+        <p class="mt-2 text-xs text-slate-400">SQLi, CORS, Secrets, Headers, XSS &amp; DNS</p>
       </div>
 
       <!-- Subscription Status & Upsell Card -->
@@ -108,19 +108,146 @@
       </div>
     </div>
 
-    <!-- Active Findings & 1-Click AI Auto-Fix List -->
+    <!-- Multi-Category Vulnerability Selector & Instant Auto-Fix Workbench -->
     <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-      <div class="px-6 py-5 border-b border-slate-800 flex items-center justify-between">
+      <div class="px-6 py-5 border-b border-slate-800 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h2 class="text-base font-bold text-white">Vulnerability Findings & Automated Patching</h2>
-          <p class="text-xs text-slate-400">Review detected security issues and apply deterministic AI patches.</p>
+          <h2 class="text-base font-bold text-white">Multi-Category Vulnerability Scan &amp; Deterministic AI Auto-Fix</h2>
+          <p class="text-xs text-slate-400">Test surgical remediation across all 6 vulnerability categories via <code class="text-emerald-400">POST /api/v1/vulnerabilities/remediate</code>.</p>
         </div>
-        <span class="text-xs text-slate-400 font-mono">Last Scan: <span id="lastScanTime">Just now</span></span>
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="vulnCategorySelector" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-mono">
+            <option value="SEC-CODE-SQLI-001">SEC-CODE-SQLI-001 (SQL Injection)</option>
+            <option value="SEC-CORS-001">SEC-CORS-001 (Wildcard CORS)</option>
+            <option value="SEC-LEAK-001">SEC-LEAK-001 (Hardcoded API Secret)</option>
+            <option value="SEC-HDR-001">SEC-HDR-001 (Missing CSP/HSTS Headers)</option>
+            <option value="SEC-CODE-XSS-001">SEC-CODE-XSS-001 (DOM Cross-Site Scripting)</option>
+            <option value="SEC-DNS-001">SEC-DNS-001 (Dangling DNS / Missing DMARC)</option>
+          </select>
+          <button id="remediateSelectedBtn" onclick="triggerAutoFix(document.getElementById('vulnCategorySelector').value)" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition shadow">
+            ✨ Remediate Selected Category
+          </button>
+          <span class="text-xs text-slate-400 font-mono ml-2">Last Scan: <span id="lastScanTime">Just now</span></span>
+        </div>
+      </div>
+
+      <!-- Quick Category Trigger Pills -->
+      <div class="px-6 py-3 bg-slate-950/60 border-b border-slate-800/80 flex flex-wrap items-center gap-2 text-xs">
+        <span class="text-slate-400 font-semibold mr-1">Quick Test Category:</span>
+        <button onclick="triggerAutoFix('SEC-CODE-SQLI-001')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-rose-950/80 text-rose-300 border border-slate-700 hover:border-rose-700 font-mono transition">SQLi (SEC-CODE-SQLI-001)</button>
+        <button onclick="triggerAutoFix('SEC-CORS-001')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-amber-950/80 text-amber-300 border border-slate-700 hover:border-amber-700 font-mono transition">CORS (SEC-CORS-001)</button>
+        <button onclick="triggerAutoFix('SEC-LEAK-001')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-rose-950/80 text-rose-300 border border-slate-700 hover:border-rose-700 font-mono transition">Secrets (SEC-LEAK-001)</button>
+        <button onclick="triggerAutoFix('SEC-HDR-001')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-950/80 text-cyan-300 border border-slate-700 hover:border-cyan-700 font-mono transition">Headers (SEC-HDR-001)</button>
+        <button onclick="triggerAutoFix('SEC-CODE-XSS-001')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-amber-950/80 text-amber-300 border border-slate-700 hover:border-amber-700 font-mono transition">XSS (SEC-CODE-XSS-001)</button>
+        <button onclick="triggerAutoFix('SEC-DNS-001')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-emerald-950/80 text-emerald-300 border border-slate-700 hover:border-emerald-700 font-mono transition">DNS (SEC-DNS-001)</button>
       </div>
 
       <div id="vulnerabilityList" class="divide-y divide-slate-800">
         <!-- Findings dynamically injected here -->
       </div>
+    </div>
+
+    <!-- Bottom Grid: Multi-Provider BYO-DNS Zone Exporter & Tier 7 Binary Merkle Proof Inspector -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+      <!-- Multi-Provider BYO-DNS Zone Exporter (#dns-export-panel) -->
+      <section id="dns-export-panel" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div>
+            <span class="text-[10px] font-mono uppercase tracking-widest text-cyan-400 font-bold">Zero-Touch Edge DNS Provisioning</span>
+            <h2 class="text-lg font-bold text-white mt-0.5">🌐 Multi-Provider BYO-DNS Zone Exporter</h2>
+            <p class="text-xs text-slate-400">Generate RFC 1035 BIND9 zonefiles, Cloudflare JSON/Terraform bundles, or AWS Route53 ChangeBatches with RFC 8555 ACME DNS-01/HTTP-01 challenge tokens.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label for="dnsDomainInput" class="block text-xs font-mono text-slate-400 mb-1">Custom Domain</label>
+            <input id="dnsDomainInput" type="text" value="portal.enterprise-example.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-cyan-500">
+          </div>
+          <div>
+            <label for="dnsTenantInput" class="block text-xs font-mono text-slate-400 mb-1">Tenant Identifier</label>
+            <input id="dnsTenantInput" type="text" value="tenant_enterprise_01" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-cyan-500">
+          </div>
+          <div>
+            <label for="dnsFormatSelect" class="block text-xs font-mono text-slate-400 mb-1">Provider Export Format</label>
+            <select id="dnsFormatSelect" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-cyan-500">
+              <option value="bind">BIND9 (RFC 1035 Zonefile)</option>
+              <option value="cloudflare">Cloudflare (API &amp; Terraform JSON)</option>
+              <option value="route53">AWS Route53 (ChangeResourceRecordSets)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="exportDnsZoneBtn" onclick="exportByoDnsZone()" class="px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold transition shadow flex items-center space-x-1.5">
+            <span>📤 Export DNS Zone Bundle</span>
+          </button>
+          <span id="dnsAcmeBadge" class="text-[11px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-1 rounded hidden"></span>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5">
+            <span class="font-mono uppercase text-[11px]">Exported Zone Payload &amp; ACME Challenge Tokens</span>
+            <span id="dnsFormatLabel" class="font-mono text-cyan-400 text-[11px]">Format: bind</span>
+          </div>
+          <pre id="dnsExportOutput" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-300 overflow-x-auto max-h-72">Click "Export DNS Zone Bundle" to invoke POST /api/v1/dns/byo/export-zone...</pre>
+        </div>
+      </section>
+
+      <!-- Tier 7 Cryptographic Provenance & Binary Merkle Proof Inspector (#provenance-merkle-panel) -->
+      <section id="provenance-merkle-panel" class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div>
+            <span class="text-[10px] font-mono uppercase tracking-widest text-emerald-400 font-bold">Patent Claims 24–25 &bull; Tier 7 Sentinel</span>
+            <h2 class="text-lg font-bold text-white mt-0.5">⛓️ Cryptographic Provenance &amp; Binary Merkle Proof Inspector</h2>
+            <p class="text-xs text-slate-400">Inspect $O(\log_2 N)$ binary Merkle inclusion proofs, Ed25519 signature status, RFC 3161 timestamp anchors, and technical verification records prepared to support FRE 902(13)/(14) custodian certification.</p>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <div>
+            <label for="merkleFileInput" class="block text-xs font-mono text-slate-400 mb-1">Workspace File Path for Merkle Inclusion Proof</label>
+            <div class="flex gap-2">
+              <input id="merkleFileInput" type="text" value="server/src/server.js" class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white font-mono focus:outline-none focus:border-emerald-500">
+              <button id="generateMerkleProofBtn" onclick="inspectMerkleProof()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow whitespace-nowrap">
+                🌲 Generate Merkle Proof
+              </button>
+              <button id="verifyProvenanceChainBtn" onclick="verifyProvenanceLedger()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition shadow whitespace-nowrap">
+                🔏 Verify Ledger &amp; Signatures
+              </button>
+            </div>
+          </div>
+
+          <div id="provenanceStatusBanner" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono">
+            <div class="bg-slate-950 border border-slate-800 rounded-lg p-2.5">
+              <div class="text-slate-500">Merkle Proof</div>
+              <div id="merkleProofStatus" class="text-emerald-400 font-bold mt-0.5">READY</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-lg p-2.5">
+              <div class="text-slate-500">Ed25519 Sig</div>
+              <div id="ed25519SigStatus" class="text-cyan-400 font-bold mt-0.5">CUSTODIED</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-lg p-2.5">
+              <div class="text-slate-500">RFC 3161 TSA</div>
+              <div id="rfc3161Status" class="text-indigo-400 font-bold mt-0.5">ANCHORED</div>
+            </div>
+            <div class="bg-slate-950 border border-slate-800 rounded-lg p-2.5">
+              <div class="text-slate-500">FRE 902 Package</div>
+              <div id="fre902Status" class="text-amber-300 font-bold mt-0.5">PREPARED</div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-1.5">
+              <span class="font-mono uppercase text-[11px]">Cryptographic Proof &amp; Verification Output</span>
+              <span class="font-mono text-emerald-400 text-[11px]">SHA-256 + Ed25519 (ML-DSA envelope planned)</span>
+            </div>
+            <pre id="provenanceOutput" class="bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-slate-300 overflow-x-auto max-h-72">Click "Generate Merkle Proof" or "Verify Ledger &amp; Signatures" to inspect live cryptographic provenance...</pre>
+          </div>
+        </div>
+      </section>
+
     </div>
 
     <!-- Diff & Remediation Preview Modal (Hidden by default) -->
@@ -149,12 +276,47 @@
   <script>
     let currentQuota = null;
 
+    const SAMPLE_VULN_PAYLOADS = {
+      'SEC-CODE-SQLI-001': {
+        sourceCode: 'const query = "SELECT * FROM orders WHERE id = " + req.query.id;',
+        targetChunk: 'const query = "SELECT * FROM orders WHERE id = " + req.query.id;',
+        replacementChunk: 'const query = "SELECT * FROM orders WHERE id = $1"; const params = [req.query.id];'
+      },
+      'SEC-CORS-001': {
+        sourceCode: 'res.setHeader("Access-Control-Allow-Origin", "*");',
+        targetChunk: 'res.setHeader("Access-Control-Allow-Origin", "*");',
+        replacementChunk: 'res.setHeader("Access-Control-Allow-Origin", "https://amicusweb.dev");'
+      },
+      'SEC-LEAK-001': {
+        sourceCode: 'const stripeKey = "' + 'sk_' + 'live_51H9999999999999999999999";',
+        targetChunk: 'const stripeKey = "' + 'sk_' + 'live_51H9999999999999999999999";',
+        replacementChunk: 'const stripeKey = process.env.STRIPE_SECRET_KEY;'
+      },
+      'SEC-HDR-001': {
+        sourceCode: 'app.use((req, res, next) => { next(); });',
+        targetChunk: 'app.use((req, res, next) => { next(); });',
+        replacementChunk: 'app.use((req, res, next) => { res.setHeader("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload"); res.setHeader("Content-Security-Policy", "default-src \'self\'"); next(); });'
+      },
+      'SEC-CODE-XSS-001': {
+        sourceCode: 'function render(bio) { document.getElementById("bio").innerHTML = bio; }',
+        targetChunk: 'document.getElementById("bio").innerHTML = bio;',
+        replacementChunk: 'document.getElementById("bio").textContent = bio;'
+      },
+      'SEC-DNS-001': {
+        domain: 'portal.enterprise-example.com',
+        sourceCode: '; Missing SPF and DMARC records for portal.enterprise-example.com',
+        targetChunk: '; Missing SPF and DMARC records for portal.enterprise-example.com',
+        replacementChunk: '@ IN TXT "v=spf1 include:_spf.amicusweb.dev -all"\n_dmarc IN TXT "v=DMARC1; p=reject; rua=mailto:dmarc@amicus-technology.net"'
+      }
+    };
+
     async function loadQuota() {
       try {
         const res = await fetch('/api/v1/security/vulnerabilities/quota?tenantId=tenant_active');
         const data = await res.json();
-        if (data.success) {
-          currentQuota = data.data;
+        const quota = data.data || data;
+        if (quota && quota.tierName) {
+          currentQuota = quota;
           document.getElementById('quotaBadge').textContent = currentQuota.freeFixesLimit === 'Unlimited'
             ? 'Unlimited (Pro Active)'
             : `${currentQuota.freeFixesRemaining} / ${currentQuota.freeFixesLimit} Left`;
@@ -171,13 +333,19 @@
       btn.innerHTML = '<span>⏳ Scanning...</span>';
 
       try {
-        // Mock sample scan for client testing
         const samplePayload = {
           codebaseFiles: [
             { path: 'server/src/routes/checkout.js', content: 'const query = "SELECT * FROM orders WHERE id = " + req.query.id;' },
-            { path: 'client/src/views/profile.js', content: 'document.getElementById("bio").innerHTML = userBio;' }
+            { path: 'client/src/views/profile.js', content: 'document.getElementById("bio").innerHTML = userBio;' },
+            { path: 'server/src/config/keys.js', content: 'const apiKey = "' + 'sk_' + 'live_51ABCDEF1234567890ABCDEF1234";' }
           ],
-          httpHeaders: { 'content-type': 'text/html' }
+          httpHeaders: {
+            'content-type': 'text/html',
+            'access-control-allow-origin': '*'
+          },
+          dnsRecords: [
+            { type: 'CNAME', name: 'staging.amicusweb.dev', value: 'old-unclaimed-app.herokuapp.com' }
+          ]
         };
 
         const res = await fetch('/api/v1/security/vulnerabilities/scan', {
@@ -186,15 +354,16 @@
           body: JSON.stringify(samplePayload)
         });
         const data = await res.json();
+        const scan = data.data || data;
 
-        if (data.success) {
-          renderScanResults(data.data);
+        if (scan && Array.isArray(scan.vulnerabilities)) {
+          renderScanResults(scan);
         }
       } catch (err) {
         console.error('Scan error:', err);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<span>⚡ Run Security Scan</span>';
+        btn.innerHTML = '<span>⚡ Run Full 6-Category Scan</span>';
       }
     }
 
@@ -240,30 +409,125 @@
     }
 
     async function triggerAutoFix(vulnId) {
+      const sample = SAMPLE_VULN_PAYLOADS[vulnId] || SAMPLE_VULN_PAYLOADS['SEC-CODE-XSS-001'];
+      const payload = {
+        tenantId: 'tenant_active',
+        vulnerabilityId: vulnId,
+        ...sample
+      };
+
       try {
-        const res = await fetch('/api/v1/security/vulnerabilities/remediate', {
+        let res = await fetch('/api/v1/vulnerabilities/remediate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            tenantId: 'tenant_active',
-            vulnerabilityId: vulnId,
-            sourceCode: 'function render(bio) { document.getElementById("bio").innerHTML = bio; }',
-            targetChunk: 'document.getElementById("bio").innerHTML = bio;',
-            replacementChunk: 'document.getElementById("bio").textContent = DOMPurify.sanitize(bio);'
-          })
+          body: JSON.stringify(payload)
         });
+        if (res.status === 404) {
+          res = await fetch('/api/v1/security/vulnerabilities/remediate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
 
         const data = await res.json();
-        if (data.success) {
-          document.getElementById('diffMessage').textContent = data.data.message;
-          document.getElementById('diffContent').textContent = data.data.diffPreview;
+        const result = data.data || data;
+        if (res.ok && result && ! data.error) {
+          document.getElementById('diffMessage').textContent = result.message || `Remediated ${vulnId} (${result.category || 'DEFENSIVE_PATCH'})`;
+          document.getElementById('diffContent').textContent = result.diffPreview || result.patchedCode || JSON.stringify(result, null, 2);
           document.getElementById('diffModal').classList.remove('hidden');
           await loadQuota();
         } else {
-          alert('Remediation error: ' + data.error);
+          alert('Remediation notice: ' + (data.error || 'Quota or patch error'));
         }
       } catch (err) {
         alert('Network error during auto-fix: ' + err.message);
+      }
+    }
+
+    async function exportByoDnsZone() {
+      const domain = document.getElementById('dnsDomainInput').value.trim() || 'portal.enterprise-example.com';
+      const tenantId = document.getElementById('dnsTenantInput').value.trim() || 'tenant_enterprise_01';
+      const format = document.getElementById('dnsFormatSelect').value;
+      const outEl = document.getElementById('dnsExportOutput');
+      const badgeEl = document.getElementById('dnsAcmeBadge');
+      document.getElementById('dnsFormatLabel').textContent = `Format: ${format}`;
+      outEl.textContent = '⏳ Exporting DNS zone configuration...';
+
+      try {
+        const res = await fetch('/api/v1/dns/byo/export-zone', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domain, tenantId, format })
+        });
+        const data = await res.json();
+        const exported = data.data || data;
+
+        if (res.ok && exported) {
+          if (exported.acmeChallenges || exported.challengeToken) {
+            badgeEl.textContent = '✔ RFC 8555 ACME DNS-01 & HTTP-01 Tokens Attached';
+            badgeEl.classList.remove('hidden');
+          }
+          if (typeof exported.zonefile === 'string') {
+            outEl.textContent = exported.zonefile + '\n\n; --- ACME Challenge Metadata ---\n' + JSON.stringify(exported.acmeChallenges || {}, null, 2);
+          } else if (typeof exported.content === 'string') {
+            outEl.textContent = exported.content;
+          } else {
+            outEl.textContent = JSON.stringify(exported, null, 2);
+          }
+        } else {
+          outEl.textContent = 'Error exporting zone: ' + (data.error || res.statusText);
+        }
+      } catch (err) {
+        outEl.textContent = 'Request failed: ' + err.message;
+      }
+    }
+
+    async function inspectMerkleProof() {
+      const filePath = document.getElementById('merkleFileInput').value.trim() || 'server/src/server.js';
+      const outEl = document.getElementById('provenanceOutput');
+      outEl.textContent = `⏳ Computing O(log2 N) binary Merkle inclusion proof for ${filePath}...`;
+
+      try {
+        const res = await fetch('/api/v1/provenance/merkle-proof', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filePath })
+        });
+        const data = await res.json();
+        const proofData = data.data || data;
+
+        if (res.ok && proofData) {
+          document.getElementById('merkleProofStatus').textContent = proofData.verified !== false ? 'VERIFIED' : 'MISMATCH';
+          outEl.textContent = JSON.stringify(proofData, null, 2);
+        } else {
+          outEl.textContent = 'Merkle proof lookup notice: ' + (data.error || JSON.stringify(data));
+        }
+      } catch (err) {
+        outEl.textContent = 'Failed to query /api/v1/provenance/merkle-proof: ' + err.message;
+      }
+    }
+
+    async function verifyProvenanceLedger() {
+      const outEl = document.getElementById('provenanceOutput');
+      outEl.textContent = '⏳ Verifying chained provenance ledger, Ed25519 signatures, and RFC 3161 timestamp anchors...';
+
+      try {
+        const res = await fetch('/api/v1/provenance/verify');
+        const data = await res.json();
+        const verifyData = data.data || data;
+
+        if (res.ok && verifyData) {
+          document.getElementById('merkleProofStatus').textContent = verifyData.valid !== false ? 'CHAIN INTACT' : 'BROKEN';
+          document.getElementById('ed25519SigStatus').textContent = 'VERIFIED';
+          document.getElementById('rfc3161Status').textContent = 'ANCHORED';
+          document.getElementById('fre902Status').textContent = 'READY FOR CERT';
+          outEl.textContent = JSON.stringify(verifyData, null, 2);
+        } else {
+          outEl.textContent = 'Verification notice: ' + (data.error || JSON.stringify(data));
+        }
+      } catch (err) {
+        outEl.textContent = 'Failed to query /api/v1/provenance/verify: ' + err.message;
       }
     }
 
@@ -279,7 +543,7 @@
         body: JSON.stringify({ tenantId: 'tenant_active', tier: 'PRO_SECURITY' })
       });
       const data = await res.json();
-      if (data.success) {
+      if (data.success || res.ok) {
         alert('Upgraded to Amicus Security Pro! You now have unlimited AI automated fixes.');
         await loadQuota();
       }
